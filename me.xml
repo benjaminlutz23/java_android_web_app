@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE student PUBLIC "-//Portland State University//DTD CS410J Grade Book//EN" "http://www.cs.pdx.edu/~whitlock/dtds/gradebook.dtd">
+<student enrolled-section="graduate">
+<id>benlutz</id>
+<firstName>Benjamin</firstName>
+<lastName>Lutz</lastName>
+<nickName>Ben</nickName>
+<email>benlutz@pdx.edu</email>
+<major>Computer Science</major>
+<notes>
+<note>Benjamin "Ben" Lutz would like to learn Lots of stuff</note>
+<note>Benjamin "Ben" Lutz has these comments: n/a</note>
+</notes>
+</student>
