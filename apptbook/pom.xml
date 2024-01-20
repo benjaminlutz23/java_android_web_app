@@ -16,10 +16,10 @@
   <url>http://www.cs.pdx.edu/~whitlock</url>
   <developers>
     <developer>
-      <id>YOU</id>
-      <name>Your name here</name>
-      <email>you@youremail.com</email>
-      <url>http://www.cs.pdx.edu/~YOU</url>
+      <id>benlutz</id>
+      <name>Benjamin Lutz</name>
+      <email>benlutz@pdx.edu</email>
+      <url>http://www.cs.pdx.edu/~benlutz</url>
       <organization>PSU Department of Computer Science</organization>
       <organizationUrl>http://www.cs.pdx.edu</organizationUrl>
       <roles>
