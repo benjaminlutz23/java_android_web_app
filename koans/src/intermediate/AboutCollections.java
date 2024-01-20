@@ -21,9 +21,9 @@ public class AboutCollections {
         list.add("Chicken");
         list.add("Dog");
         list.add("Chicken");
-        assertEquals(list.get(0), __);
-        assertEquals(list.get(1), __);
-        assertEquals(list.get(2), __);
+        assertEquals(list.get(0), "Chicken");
+        assertEquals(list.get(1), "Dog");
+        assertEquals(list.get(2), "Chicken");
     }
 
     @Koan
