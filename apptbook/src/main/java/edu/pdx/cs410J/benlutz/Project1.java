@@ -12,8 +12,8 @@ public class Project1 {
     return true;
   }
 
-  public static void main(String[] args) {
-    Appointment appointment = new Appointment();  // Refer to one of Dave's classes so that we can be sure it is on the classpath
+  public static void main(String[] args) throws invalidDescriptionException {
+    Appointment appointment = new Appointment(args[0], args[1], args[2]);  // Refer to one of Dave's classes so that we can be sure it is on the classpath
     System.err.println("Missing command line arguments");
     for (String arg : args) {
       System.out.println(arg);

@@ -23,7 +23,7 @@ class Project1IT extends InvokeMainTestCase {
    */
   @Test
   void testNoCommandLineArguments() {
-    MainMethodResult result = invokeMain();
+    MainMethodResult result = invokeMain("owner", "description", "begin", "end");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing command line arguments"));
   }
 
