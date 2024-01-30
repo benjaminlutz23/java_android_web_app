@@ -36,15 +36,21 @@ public class AppointmentTest {
     }
   }
 
-  /**
-   * This unit test will need to be modified (likely deleted) as you implement
-   * your project.
-   */
-  @Test
-  void initiallyAllAppointmentsHaveTheSameDescription() throws invalidDescriptionException {
-    Appointment appointment = new Appointment("A fancy description", "doesn't matter", "doesn't matter");
-    assertThat(appointment.getDescription(), containsString("A fancy description"));
-  }
+  // Test that beginDate is no more than 10 characters
+
+  // Test that beginDate is no less than 8 characters
+
+  // Test that endDate is no more than 10 characters
+
+  // Test that endDate is no less than 8 characters
+
+  // Test that beginTime is no more than 5 characters
+
+  // Test that beginTime is no less than 4 characters
+
+  // Test that endTime is no more than 5 characters
+
+  // Test that endTime is no less than 4 characters
 
   @Test
   void forProject1ItIsOkayIfGetBeginTimeReturnsNull() throws invalidDescriptionException {

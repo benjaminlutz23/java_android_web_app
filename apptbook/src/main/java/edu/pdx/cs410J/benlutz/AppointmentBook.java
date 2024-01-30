@@ -2,13 +2,16 @@ package edu.pdx.cs410J.benlutz;
 
 import edu.pdx.cs410J.AbstractAppointmentBook;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class AppointmentBook extends AbstractAppointmentBook<Appointment> {
   private final String owner;
+  private final Collection<Appointment> appointments;
 
   public AppointmentBook(String owner) {
     this.owner = owner;
+    this.appointments = new ArrayList<>();
   }
 
   @Override
@@ -18,11 +21,11 @@ public class AppointmentBook extends AbstractAppointmentBook<Appointment> {
 
   @Override
   public Collection<Appointment> getAppointments() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    return this.appointments;
   }
 
   @Override
   public void addAppointment(Appointment appt) {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    this.appointments.add(appt);
   }
 }

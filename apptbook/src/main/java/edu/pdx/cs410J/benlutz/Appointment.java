@@ -23,12 +23,12 @@ public class Appointment extends AbstractAppointment {
 
   @Override
   public String getBeginTimeString() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    return this.begin;
   }
 
   @Override
   public String getEndTimeString() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    return this.end;
   }
 
   @Override
