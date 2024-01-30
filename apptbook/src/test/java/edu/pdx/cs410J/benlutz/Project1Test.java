@@ -34,7 +34,8 @@ class Project1Test extends InvokeMainTestCase{
 
   @Test
   void tooManyCommandLineArgumentsPrintsErrorToStandardError() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "Arg1", "Arg2", "Arg3", "Arg4", "Arg5", "Arg6", "Arg7");
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "Opt1", "Opt2", "Arg3", "Arg4", "Arg5",
+            "Arg6", "Arg7", "Arg8", "Arg9");
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
   }
 
@@ -46,7 +47,7 @@ class Project1Test extends InvokeMainTestCase{
       assertThat(readme, not(nullValue()));
       BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
       String line = reader.readLine();
-      assertThat(line, containsString("This is a README file!"));
+      assertThat(line, containsString("CS 510J Project 1: Appointment Book Application"));
     }
   }
 }
