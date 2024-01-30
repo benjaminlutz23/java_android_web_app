@@ -21,12 +21,13 @@ public class Project1 {
   public static void main(String[] args) throws invalidDescriptionException {
 
     if (args.length == 0) {
-      System.err.println("Missing command line arguments");
+      printHelpMessage();
       return;
     }
 
     if (args.length > 8) {
       System.err.println("Too many command line arguments");
+      return;
     }
 
     boolean printFlag = false;
@@ -39,12 +40,6 @@ public class Project1 {
     String endTime = null;
     int argCounter = 0;
 
-    /*
-    if (args.length == 0) {
-      printHelpMessage();
-      return;
-    }
-     */
 
     for (String arg : args) {
       if (arg.startsWith("-")) {
@@ -75,7 +70,7 @@ public class Project1 {
             endTime = arg;
             break;
           default:
-            //throw new IllegalArgumentException("Too many arguments.");
+            throw new IllegalArgumentException("Too many arguments.");
         }
         argCounter++;
       }
@@ -86,7 +81,7 @@ public class Project1 {
       return;
     }
 
-    if (args.length < 6) {
+    if (argCounter < 6) {
       System.err.println("All fields are required (i.e. Owner Name, Description, Begin Date/Time, End Date/Time)");
     }
 
@@ -102,11 +97,6 @@ public class Project1 {
     try (InputStream readmeStream = Project1.class.getResourceAsStream("README.txt");
          BufferedReader reader = new BufferedReader(new InputStreamReader(readmeStream))) {
 
-      if (readmeStream == null) {
-        System.err.println("README file not found");
-        return;
-      }
-
       String line;
       while ((line = reader.readLine()) != null) {
         System.out.println(line);
@@ -115,6 +105,28 @@ public class Project1 {
     } catch (IOException e) {
       System.err.println("Error reading README file: " + e.getMessage());
     }
+  }
+
+  private static void printHelpMessage() {
+    System.err.println("""
+        Error: No command line arguments
+        
+        Project 1: Appointment Book Program
+        
+        Usage: java -jar target/apptbook-1.0.0.jar [options] <args>
+          Non-optional command line arguments (required in this order):
+            owner        - The person who owns the appt book
+            description  - A description of the appointment
+            beginDate    - When the appt begins (mm/dd/yyyy)
+            beginTime    - When the appt begins (hh:mm)
+            endDate      - When the appt ends (mm/dd/yyyy)
+            endTime      - When the appt ends (hh:mm)
+          Optional command line arguments (options may appear in any order):
+            -print       - Prints a description of the new appointment
+            -README      - Prints a README for this project and exits
+            
+        Note: Date and time should be in 24-hour format. For multi-word descriptions or owner names,
+        enclose them in quotes.""");
   }
 
 }
