@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.benlutz;
 
+import edu.pdx.cs410J.InvokeMainTestCase;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -15,7 +16,27 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * from <code>Project1IT</code> which is an integration test (and can capture data
  * written to {@link System#out} and the like.
  */
-class Project1Test {
+class Project1Test extends InvokeMainTestCase{
+
+  @Test
+  void invokingMainWithNoArgumentsPrintsMissingArgumentsToStandardError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing command line arguments"));
+  }
+
+  //When there are less than 6 arguments
+  @Test
+  void missingCommandLineArgumentsPrintsErrorToStandardError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "Arg1", "Arg2", "Arg3", "Arg4", "Arg5");
+    assertThat(result.getTextWrittenToStandardError(), containsString("All fields are required (i.e. Owner Name, " +
+            "Description, Begin Date/Time, End Date/Time)"));
+  }
+
+  @Test
+  void tooManyCommandLineArgumentsPrintsErrorToStandardError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "Arg1", "Arg2", "Arg3", "Arg4", "Arg5", "Arg6", "Arg7");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
+  }
 
   @Test
   void readmeCanBeReadAsResource() throws IOException {

@@ -16,6 +16,20 @@ public class Project1 {
 
   public static void main(String[] args) throws invalidDescriptionException {
 
+    if (args.length == 0) {
+      System.err.println("Missing command line arguments");
+      return;
+    }
+
+    if (args.length < 6) {
+      System.err.println("All fields are required (i.e. Owner Name, Description, Begin Date/Time, End Date/Time)");
+    }
+
+    if (args.length > 6) {
+      System.err.println("Too many command line arguments");
+    }
+
+
     boolean printFlag = false;
     boolean readmeFlag = false;
     String owner = null;
@@ -62,7 +76,7 @@ public class Project1 {
             endTime = arg;
             break;
           default:
-            throw new IllegalArgumentException("Too many arguments.");
+            //throw new IllegalArgumentException("Too many arguments.");
         }
         argCounter++;
       }
