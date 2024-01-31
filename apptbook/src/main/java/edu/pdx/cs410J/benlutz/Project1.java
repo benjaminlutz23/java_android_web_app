@@ -18,7 +18,7 @@ public class Project1 {
     return true;
   }
 
-  public static void main(String[] args) throws invalidDescriptionException {
+  public static void main(String[] args) throws invalidDescriptionException, invalidDateFormatException, invalidTimeFormatException {
 
     if (args.length == 0) {
       printHelpMessage();
@@ -52,8 +52,7 @@ public class Project1 {
         } else if (arg.equals("-README")) {
           readmeFlag = true;
           break; // No need to parse further if README is requested
-        }
-        else {
+        } else {
           invalidOptionFlag = true;
         }
         optCounter++;
@@ -86,10 +85,12 @@ public class Project1 {
 
     if (invalidOptionFlag) {
       System.err.println("Error: Invalid command line option");
+      return;
     }
 
     if (argCounter < 6) {
       System.err.println("All fields are required (i.e. Owner Name, Description, Begin Date/Time, End Date/Time)");
+      return;
     }
 
     if (readmeFlag) {
@@ -97,23 +98,30 @@ public class Project1 {
       return;
     }
 
-    // Concatenate begin and end time strings
-    beginTimeString = beginDate + " " + beginTime;
-    endTimeString = endDate + " " + endTime;
 
+    try {
+      // Create the appointment
+      Appointment appointment = new Appointment(description, beginDate, beginTime, endDate, endTime);
 
-    // Create the appointment
-    Appointment appointment = new Appointment(description, beginTimeString, endTimeString);
-    // Create the appointment book
-    AppointmentBook appointmentBook = new AppointmentBook(owner);
+      // Create the appointment book
+      AppointmentBook appointmentBook = new AppointmentBook(owner);
 
-    // Add the appointment to the appointment book
-    appointmentBook.addAppointment(appointment);
+      // Add the appointment to the appointment book
+      appointmentBook.addAppointment(appointment);
 
-    if (printFlag) {
-      appointmentBook.toString();
-      appointment.toString();
+      if (printFlag) {
+        appointmentBook.toString();
+        appointment.toString();
+      }
+
+    } catch (invalidDescriptionException e) {
+      System.err.println("Invalid Description: " + e.getMessage());
+    } catch (invalidDateFormatException e) {
+      System.err.println("Invalid date format: " + e.getMessage());
+    } catch (invalidTimeFormatException e) {
+      System.err.println("Invalid time format: " + e.getMessage());
     }
+
 
 
     System.err.println("Missing command line arguments");
