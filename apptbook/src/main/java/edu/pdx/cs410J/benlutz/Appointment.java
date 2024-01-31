@@ -12,8 +12,19 @@ import java.util.Objects;
  */
 public class Appointment extends AbstractAppointment {
 
+  /**
+   * The description of the appointment.
+   */
   private final String description;
+
+  /**
+   * The starting time of the appointment in string format.
+   */
   private final String beginTimeString;
+
+  /**
+   * The ending time of the appointment in string format.
+   */
   private final String endTimeString;
 
 

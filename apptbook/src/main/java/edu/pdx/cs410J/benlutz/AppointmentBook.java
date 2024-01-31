@@ -12,7 +12,14 @@ import java.util.Objects;
  * for managing appointments for a specific owner
  */
 public class AppointmentBook extends AbstractAppointmentBook<Appointment> {
+  /**
+   * The name of the owner of the appointment book.
+   */
   private final String owner;
+
+  /**
+   * A collection of appointments in the appointment book.
+   */
   private final Collection<Appointment> appointments;
 
   /**
