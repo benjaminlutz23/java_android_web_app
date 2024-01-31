@@ -11,20 +11,26 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 class Project1IT extends InvokeMainTestCase {
 
-  /**
-   * Invokes the main method of {@link Project1} with the given arguments.
-   */
-  private MainMethodResult invokeMain(String... args) {
-    return invokeMain( Project1.class, args );
+  @Test
+  void invokingMainWithNoArgumentsPrintsMissingArgumentsToStandardError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: No command line arguments"));
   }
 
-  /**
-   * Tests that invoking the main method with no arguments issues an error
-   */
+  //When there are less than 6 arguments
   @Test
-  void testNoCommandLineArguments() {
-    MainMethodResult result = invokeMain("owner", "description", "begin", "end");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Missing command line arguments"));
+  void tooManyCommandLineArgumentsPrintsErrorToStandardError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "Opt1", "Opt2", "Arg3", "Arg4", "Arg5",
+            "Arg6", "Arg7", "Arg8", "Arg9");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
+  }
+
+  @Test
+  void missingCommandLineArgumentsPrintsErrorToStandardError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "-print", "owner", "description",
+            "11/30/2000", "07:00", "11/30/2000");
+    assertThat(result.getTextWrittenToStandardError(), containsString("All fields are required (i.e. Owner Name, " +
+            "Description, Begin Date/Time, End Date/Time)"));
   }
 
 }
