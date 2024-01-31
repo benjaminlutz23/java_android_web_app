@@ -11,10 +11,22 @@ import java.io.Writer;
 public class TextDumper implements AppointmentBookDumper<AppointmentBook> {
   private final Writer writer;
 
+  /**
+   * Constructs a new TextDumper that writes to a specified {@link Writer}
+   *
+   * @param writer The writer to which the appointment book data will be written
+   */
   public TextDumper(Writer writer) {
     this.writer = writer;
   }
 
+  /**
+   * Dumps an {@link AppointmentBook} to a text format using the writer provided
+   * <p>
+   * This method writes the owner's name and appointment details to the writer
+   *
+   * @param book The appointment book to be dumped
+   */
   @Override
   public void dump(AppointmentBook book) {
     try (
