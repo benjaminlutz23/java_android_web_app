@@ -29,9 +29,9 @@ public class AppointmentTest {
   }
 
   @Test
-  void nullDescriptionThrowsException() {
+  void emptyDescriptionThrowsException() {
     assertThrows(invalidDescriptionException.class, () ->
-            new Appointment(null, "doesn't", "matter", "doesn't", "matter")
+            new Appointment("", "doesn't", "matter", "doesn't", "matter")
     );
   }
 

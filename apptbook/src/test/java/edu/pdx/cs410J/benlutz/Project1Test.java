@@ -36,4 +36,12 @@ class Project1Test extends InvokeMainTestCase{
       assertThat(line, containsString("CS 510J Project 1: Appointment Book Application"));
     }
   }
+
+
+  // Invalid description
+
+  // Invalid date format
+
+  // Invalid time format
+
 }

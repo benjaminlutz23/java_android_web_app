@@ -40,5 +40,4 @@ class Project1IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
   }
 
-
 }

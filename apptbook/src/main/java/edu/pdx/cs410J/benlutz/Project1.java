@@ -88,13 +88,13 @@ public class Project1 {
       return;
     }
 
-    if (argCounter < 6) {
-      System.err.println("All fields are required (i.e. Owner Name, Description, Begin Date/Time, End Date/Time)");
+    if (readmeFlag) {
+      printReadme();
       return;
     }
 
-    if (readmeFlag) {
-      printReadme();
+    if (argCounter < 6) {
+      System.err.println("All fields are required (i.e. Owner Name, Description, Begin Date/Time, End Date/Time)");
       return;
     }
 
@@ -115,16 +115,19 @@ public class Project1 {
       }
 
     } catch (invalidDescriptionException e) {
-      System.err.println("Invalid Description: " + e.getMessage());
+      System.err.println("Invalid Description");
+      return;
     } catch (invalidDateFormatException e) {
-      System.err.println("Invalid date format: " + e.getMessage());
+      System.err.println("Invalid date format");
+      return;
     } catch (invalidTimeFormatException e) {
-      System.err.println("Invalid time format: " + e.getMessage());
+      System.err.println("Invalid time format");
+      return;
     }
 
 
 
-    System.err.println("Missing command line arguments");
+    System.err.println("This default print statement thing.  Here's the arguments");
     for (String arg : args) {
       System.out.println(arg);
     }
