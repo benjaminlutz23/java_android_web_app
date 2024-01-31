@@ -4,12 +4,17 @@ import edu.pdx.cs410J.AbstractAppointmentBook;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 public class AppointmentBook extends AbstractAppointmentBook<Appointment> {
   private final String owner;
   private final Collection<Appointment> appointments;
 
-  public AppointmentBook(String owner) {
+  public AppointmentBook(String owner) throws invalidOwnerException {
+    if (Objects.equals(owner, "")) {
+      throw new invalidOwnerException();
+    }
+
     this.owner = owner;
     this.appointments = new ArrayList<>();
   }

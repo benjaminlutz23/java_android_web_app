@@ -34,6 +34,10 @@ public class TextParser implements AppointmentBookParser<AppointmentBook> {
 
     } catch (IOException e) {
       throw new ParserException("While parsing appointment book text", e);
+    } catch (invalidOwnerException e) {
+      System.err.println("Invalid owner name");
     }
+
+      return null;
   }
 }

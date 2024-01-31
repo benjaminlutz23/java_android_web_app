@@ -17,7 +17,7 @@ public class AppointmentBookTest {
     private Appointment appointment;
 
     @BeforeEach
-    public void setUp() throws invalidDescriptionException, invalidDateFormatException, invalidTimeFormatException {
+    public void setUp() throws invalidDescriptionException, invalidDateFormatException, invalidTimeFormatException, invalidOwnerException {
         book = new AppointmentBook("Owner");
         appointment = new Appointment("Description", "07/12/2021", "12:00", "07/12/2021", "13:00");
     }
@@ -25,6 +25,13 @@ public class AppointmentBookTest {
     @Test
     public void getOwnerNameReturnsCorrectOwnerName() {
         assertEquals("Owner", book.getOwnerName());
+    }
+
+    @Test
+    public void emptyOwnerNameFieldPrintsErrorToStandardError() {
+        assertThrows(invalidOwnerException.class, () ->
+                new AppointmentBook("")
+        );
     }
 
     @Test

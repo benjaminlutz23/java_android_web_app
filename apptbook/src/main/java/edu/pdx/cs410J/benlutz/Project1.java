@@ -123,9 +123,12 @@ public class Project1 {
     } catch (invalidTimeFormatException e) {
       System.err.println("Invalid time format");
       return;
+    } catch (invalidOwnerException e) {
+      System.err.println("Invalid Owner Name");
+      return;
     }
 
-    System.out.println("\nThank you for using this program.");
+      System.out.println("\nThank you for using this program.");
   }
 
   private static void printReadme() {

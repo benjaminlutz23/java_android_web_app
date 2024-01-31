@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class TextDumperTest {
 
   @Test
-  void appointmentBookOwnerIsDumpedInTextFormat() {
+  void appointmentBookOwnerIsDumpedInTextFormat() throws invalidOwnerException {
     String owner = "Test Appointment Book";
     AppointmentBook book = new AppointmentBook(owner);
 
@@ -26,7 +26,7 @@ public class TextDumperTest {
   }
 
   @Test
-  void canParseTextWrittenByTextDumper(@TempDir File tempDir) throws IOException, ParserException {
+  void canParseTextWrittenByTextDumper(@TempDir File tempDir) throws IOException, ParserException, invalidOwnerException {
     String owner = "Test Appointment Book";
     AppointmentBook book = new AppointmentBook(owner);
 
