@@ -17,14 +17,7 @@ class Project1IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: No command line arguments"));
   }
 
-  //When there are less than 6 arguments
-  @Test
-  void tooManyCommandLineArgumentsPrintsErrorToStandardError() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "Opt1", "Opt2", "Arg3", "Arg4", "Arg5",
-            "Arg6", "Arg7", "Arg8", "Arg9");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
-  }
-
+  //When there are less than 6 arguments not including options
   @Test
   void missingCommandLineArgumentsPrintsErrorToStandardError() {
     InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "-print", "owner", "description",
@@ -32,5 +25,20 @@ class Project1IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), containsString("All fields are required (i.e. Owner Name, " +
             "Description, Begin Date/Time, End Date/Time)"));
   }
+
+  @Test
+  void unknownCommandLineOptionPrintsErrorToStandardError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "-print", "-unknownOption", "owner", "description",
+            "begin date", "begin time", "end date", "end time");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: Invalid command line option"));
+  }
+
+  @Test
+  void tooManyCommandLineArgumentsPrintsErrorToStandardError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "Arg1", "Arg2", "Arg3", "Arg4", "Arg5",
+            "Arg6", "Arg7", "Arg8", "Arg9");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
+  }
+
 
 }

@@ -32,6 +32,7 @@ public class Project1 {
 
     boolean printFlag = false;
     boolean readmeFlag = false;
+    boolean invalidOptionFlag = false;
     String owner = null;
     String description = null;
     String beginDate = null;
@@ -39,6 +40,9 @@ public class Project1 {
     String beginTime = null;
     String endTime = null;
     int argCounter = 0;
+    int optCounter = 0;
+    String beginTimeString = null;
+    String endTimeString = null;
 
 
     for (String arg : args) {
@@ -49,6 +53,10 @@ public class Project1 {
           readmeFlag = true;
           break; // No need to parse further if README is requested
         }
+        else {
+          invalidOptionFlag = true;
+        }
+        optCounter++;
       } else {
         switch (argCounter) {
           case 0:
@@ -76,17 +84,38 @@ public class Project1 {
       }
     }
 
-    if (readmeFlag) {
-      printReadme();
-      return;
+    if (invalidOptionFlag) {
+      System.err.println("Error: Invalid command line option");
     }
 
     if (argCounter < 6) {
       System.err.println("All fields are required (i.e. Owner Name, Description, Begin Date/Time, End Date/Time)");
     }
 
+    if (readmeFlag) {
+      printReadme();
+      return;
+    }
 
-    Appointment appointment = new Appointment(args[0], args[1], args[2]);  // Refer to one of Dave's classes so that we can be sure it is on the classpath
+    // Concatenate begin and end time strings
+    beginTimeString = beginDate + " " + beginTime;
+    endTimeString = endDate + " " + endTime;
+
+
+    // Create the appointment
+    Appointment appointment = new Appointment(description, beginTimeString, endTimeString);
+    // Create the appointment book
+    AppointmentBook appointmentBook = new AppointmentBook(owner);
+
+    // Add the appointment to the appointment book
+    appointmentBook.addAppointment(appointment);
+
+    if (printFlag) {
+      appointmentBook.toString();
+      appointment.toString();
+    }
+
+
     System.err.println("Missing command line arguments");
     for (String arg : args) {
       System.out.println(arg);
@@ -108,25 +137,19 @@ public class Project1 {
   }
 
   private static void printHelpMessage() {
-    System.err.println("""
-        Error: No command line arguments
-        
-        Project 1: Appointment Book Program
-        
-        Usage: java -jar target/apptbook-1.0.0.jar [options] <args>
-          Non-optional command line arguments (required in this order):
-            owner        - The person who owns the appt book
-            description  - A description of the appointment
-            beginDate    - When the appt begins (mm/dd/yyyy)
-            beginTime    - When the appt begins (hh:mm)
-            endDate      - When the appt ends (mm/dd/yyyy)
-            endTime      - When the appt ends (hh:mm)
-          Optional command line arguments (options may appear in any order):
-            -print       - Prints a description of the new appointment
-            -README      - Prints a README for this project and exits
-            
-        Note: Date and time should be in 24-hour format. For multi-word descriptions or owner names,
-        enclose them in quotes.""");
+    System.err.println("Error: No command line arguments\n" +
+        "Project 1: Appointment Book Program\n" +
+        "Usage: java -jar target/apptbook-1.0.0.jar [options] <args>\n" +
+        "  Non-optional command line arguments (required in this order):\n" +
+        "    owner        - The person who owns the appt book\n" +
+        "    description  - A description of the appointment\n" +
+        "    beginDate    - When the appt begins (mm/dd/yyyy)\n" +
+        "    beginTime    - When the appt begins (hh:mm)\n" +
+        "    endDate      - When the appt ends (mm/dd/yyyy)\n" +
+        "    endTime      - When the appt ends (hh:mm)\n" +
+        "  Optional command line arguments (options may appear in any order):\n" +
+        "    -print       - Prints a description of the new appointment\n" +
+        "    -README      - Prints a README for this project and exits\n" +
+        "Note: Date and time should be in 24-hour format. For multi-word descriptions or owner names, enclose them in quotes.");
   }
-
 }
