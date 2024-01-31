@@ -110,12 +110,12 @@ public class Project1 {
       appointmentBook.addAppointment(appointment);
 
       if (printFlag) {
-        appointmentBook.toString();
-        appointment.toString();
+        System.out.println(appointmentBook);
+        System.out.println(appointment);
       }
 
     } catch (invalidDescriptionException e) {
-      System.err.println("Invalid Description");
+      System.err.println("Invalid Description: " + e.getMessage());
       return;
     } catch (invalidDateFormatException e) {
       System.err.println("Invalid date format");
@@ -125,23 +125,20 @@ public class Project1 {
       return;
     }
 
-
-
-    System.err.println("This default print statement thing.  Here's the arguments");
-    for (String arg : args) {
-      System.out.println(arg);
-    }
+    System.out.println("\nThank you for using this program.");
   }
 
   private static void printReadme() {
-    try (InputStream readmeStream = Project1.class.getResourceAsStream("README.txt");
-         BufferedReader reader = new BufferedReader(new InputStreamReader(readmeStream))) {
+    try (InputStream readmeStream = Project1.class.getResourceAsStream("README.txt")) {
+        assert readmeStream != null;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readmeStream))) {
 
-      String line;
-      while ((line = reader.readLine()) != null) {
-        System.out.println(line);
-      }
+          String line;
+          while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+          }
 
+        }
     } catch (IOException e) {
       System.err.println("Error reading README file: " + e.getMessage());
     }

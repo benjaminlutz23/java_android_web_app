@@ -39,9 +39,23 @@ class Project1Test extends InvokeMainTestCase{
 
 
   // Invalid description
+  /*
+  @Test
+  void invalidDescriptionPrintsErrorToStandardError() {
+
+  }
 
   // Invalid date format
+  @Test
+  void invalidDateFormatPrintsErrorToStandardError() {
+
+  }
 
   // Invalid time format
+  @Test
+  void invalidTimeFormatPrintsErrorToStandardError() {
+
+  }
+  */
 
 }
