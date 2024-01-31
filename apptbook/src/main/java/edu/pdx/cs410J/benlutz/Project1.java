@@ -8,16 +8,30 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
+
 /**
- * The main class for the CS410J appointment book Project
+ * The main class for the Project 1 Appointment Book application.
+ * This class handles the command-line interface for creating and managing an appointment book
  */
 public class Project1 {
 
+  /*
   @VisibleForTesting
   static boolean isValidDateAndTime(String dateAndTime) {
     return true;
   }
+  */
 
+  /**
+   * The main entry point for the Appointment Book application
+   * <p>
+   * This method processes command line arguments to create appointments and manage an appointment book
+   *
+   * @param args Command line arguments used to run the program
+   * @throws invalidDescriptionException If the description of the appointment is invalid
+   * @throws invalidDateFormatException If the date format is invalid
+   * @throws invalidTimeFormatException If the time format is invalid
+   */
   public static void main(String[] args) throws invalidDescriptionException, invalidDateFormatException, invalidTimeFormatException {
 
     if (args.length == 0) {
@@ -131,6 +145,11 @@ public class Project1 {
       System.out.println("\nThank you for using this program.");
   }
 
+  /**
+   * Prints the README information to the standard output
+   * <p>
+   * This method reads the README information from a text file and prints it
+   */
   private static void printReadme() {
     try (InputStream readmeStream = Project1.class.getResourceAsStream("README.txt")) {
         assert readmeStream != null;
@@ -147,6 +166,11 @@ public class Project1 {
     }
   }
 
+  /**
+   * Prints a help message to the standard error output
+   * <p>
+   * This method displays usage information about the program
+   */
   private static void printHelpMessage() {
     System.err.println("Error: No command line arguments\n" +
         "Project 1: Appointment Book Program\n" +
