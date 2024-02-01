@@ -55,4 +55,5 @@ public class AppointmentBookTest {
         assertFalse(appointments.isEmpty());
         assertTrue(appointments.contains(appointment));
     }
+
 }

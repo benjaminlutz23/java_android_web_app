@@ -37,25 +37,22 @@ class Project1Test extends InvokeMainTestCase{
     }
   }
 
-
-  // Invalid description
-  /*
   @Test
-  void invalidDescriptionPrintsErrorToStandardError() {
-
+  void readmeFlagPrintsReadmeToStandardOut() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "-README");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("CS 510J Project 1: Appointment Book Application"));
   }
 
-  // Invalid date format
   @Test
-  void invalidDateFormatPrintsErrorToStandardError() {
-
+  void printFlagPrintsAppointmentDetails() {
+    String[] args = {"-print", "owner", "description", "01/01/2024", "12:00", "01/01/2024", "13:00"};
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, args);
+    assertThat(result.getTextWrittenToStandardOut(), containsString("description"));
   }
 
-  // Invalid time format
   @Test
-  void invalidTimeFormatPrintsErrorToStandardError() {
-
+  void invalidOptionPrintsErrorToStandardError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "-invalidOption");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: Invalid command line option"));
   }
-  */
-
 }
