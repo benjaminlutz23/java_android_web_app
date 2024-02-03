@@ -6,7 +6,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
+import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 
 
 /**
@@ -22,6 +28,8 @@ public class Project1 {
   }
   */
 
+  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("[M/d/yyyy][MM/dd/yyyy][MM/d/yyyy][M/dd/yyyy] [H:mm][HH:mm]");
+
   /**
    * The main entry point for the Appointment Book application
    * <p>
@@ -29,10 +37,8 @@ public class Project1 {
    *
    * @param args Command line arguments used to run the program
    * @throws invalidDescriptionException If the description of the appointment is invalid
-   * @throws invalidDateFormatException If the date format is invalid
-   * @throws invalidTimeFormatException If the time format is invalid
    */
-  public static void main(String[] args) throws invalidDescriptionException, invalidDateFormatException, invalidTimeFormatException {
+  public static void main(String[] args) throws invalidDescriptionException {
 
     if (args.length == 0) {
       printHelpMessage();
@@ -45,7 +51,6 @@ public class Project1 {
     }
 
     boolean printFlag = false;
-    boolean readmeFlag = false;
     boolean invalidOptionFlag = false;
     String owner = null;
     String description = null;
@@ -55,8 +60,9 @@ public class Project1 {
     String endTime = null;
     int argCounter = 0;
     int optCounter = 0;
-    String beginTimeString = null;
-    String endTimeString = null;
+
+    ZonedDateTime beginDateTime = null;
+    ZonedDateTime endDateTime = null;
 
 
     for (String arg : args) {
@@ -64,8 +70,8 @@ public class Project1 {
         if (arg.equals("-print")) {
           printFlag = true;
         } else if (arg.equals("-README")) {
-          readmeFlag = true;
-          break; // No need to parse further if README is requested
+          printReadme();
+          return;
         } else {
           invalidOptionFlag = true;
         }
@@ -102,10 +108,27 @@ public class Project1 {
       return;
     }
 
-    if (readmeFlag) {
-      printReadme();
+    if (endDate == null || endTime == null) {
+      System.err.println("Error: Missing end time");
+    }
+
+    try {
+      LocalDateTime beginLocalDateTime = LocalDateTime.parse(beginDate + " " + beginTime, DATE_TIME_FORMAT);
+      beginDateTime = beginLocalDateTime.atZone(ZoneId.systemDefault());
+    } catch (DateTimeParseException e) {
+      System.err.println("Invalid begin date/time format: " + e.getMessage());
       return;
     }
+
+    try {
+      LocalDateTime endLocalDateTime = LocalDateTime.parse(endDate + " " + endTime, DATE_TIME_FORMAT);
+      endDateTime = endLocalDateTime.atZone(ZoneId.systemDefault());
+    } catch (DateTimeParseException e) {
+      System.err.println("Invalid end date/time format: " + e.getMessage());
+      return;
+    }
+
+
 
     if (argCounter < 6) {
       System.err.println("All fields are required (i.e. Owner Name, Description, Begin Date/Time, End Date/Time)");
@@ -115,7 +138,7 @@ public class Project1 {
 
     try {
       // Create the appointment
-      Appointment appointment = new Appointment(description, beginDate, beginTime, endDate, endTime);
+      Appointment appointment = new Appointment(description, beginDateTime, endDateTime);
 
       // Create the appointment book
       AppointmentBook appointmentBook = new AppointmentBook(owner);
@@ -125,17 +148,11 @@ public class Project1 {
 
       if (printFlag) {
         System.out.println(appointmentBook);
-        System.out.println(appointment);
+        System.out.println(appointment.display());
       }
 
     } catch (invalidDescriptionException e) {
       System.err.println("Invalid Description: " + e.getMessage());
-      return;
-    } catch (invalidDateFormatException e) {
-      System.err.println("Invalid date format");
-      return;
-    } catch (invalidTimeFormatException e) {
-      System.err.println("Invalid time format");
       return;
     } catch (invalidOwnerException e) {
       System.err.println("Invalid Owner Name");

@@ -4,6 +4,10 @@ import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,89 +24,39 @@ public class AppointmentTest {
   }
    */
 
-  @Test
-  void descriptionWithSomeTextIsThatText() throws invalidDescriptionException, invalidDateFormatException, invalidTimeFormatException {
-    //String description = "A fancy description";
-    var appointmentWithDescription = new Appointment("A fancy description", "11/30/2000", "07:00", "11/30/2000", "09:00");
+  private ZonedDateTime createZonedDateTime(String date, String time) {
+    LocalDateTime localDateTime = LocalDateTime.parse(date + "T" + time);
+    return localDateTime.atZone(ZoneId.systemDefault());
+  }
 
-    assertThat(appointmentWithDescription.getDescription(), equalTo("A fancy description"));
+  @Test
+  void descriptionWithSomeTextIsThatText() throws Exception, invalidDescriptionException {
+    ZonedDateTime begin = createZonedDateTime("2000-11-30", "07:00");
+    ZonedDateTime end = createZonedDateTime("2000-11-30", "09:00");
+    var appointment = new Appointment("A fancy description", begin, end);
+
+    assertThat(appointment.getDescription(), equalTo("A fancy description"));
   }
 
   @Test
   void emptyDescriptionThrowsException() {
+    ZonedDateTime begin = createZonedDateTime("2000-11-30", "07:00");
+    ZonedDateTime end = createZonedDateTime("2000-11-30", "09:00");
     assertThrows(invalidDescriptionException.class, () ->
-            new Appointment("", "doesn't", "matter", "doesn't", "matter")
+            new Appointment("", begin, end)
     );
   }
 
-  @Test
-  void beginDateIsNoMoreThan10Characters() {
-    assertThrows(invalidDateFormatException.class, () ->
-            new Appointment("description", "11/30/20001", "07:00", "11/30/2000", "09:00")
-    );
-  }
-
-
-  // Test that beginDate is no less than 8 characters
-  @Test
-  void beginDateIsNoLessThan8Characters() {
-    assertThrows(invalidDateFormatException.class, () ->
-            new Appointment("description", "1/1/202", "07:00", "01/01/2021", "09:00")
-    );
-  }
-
-  // Test that endDate is no more than 10 characters
-  @Test
-  void endDateIsNoMoreThan10Characters() {
-    assertThrows(invalidDateFormatException.class, () ->
-            new Appointment("description", "01/01/2021", "07:00", "11/30/20001", "09:00")
-    );
-  }
-
-  // Test that endDate is no less than 8 characters
-  @Test
-  void endDateIsNoLessThan8Characters() {
-    assertThrows(invalidDateFormatException.class, () ->
-            new Appointment("description", "01/01/2021", "07:00", "1/1/202", "09:00")
-    );
-  }
-
-  // Test that beginTime is no more than 5 characters
-  @Test
-  void beginTimeIsNoMoreThan5Characters() {
-    assertThrows(invalidTimeFormatException.class, () ->
-            new Appointment("description", "01/01/2021", "07:000", "01/01/2021", "09:00")
-    );
-  }
-
-  // Test that beginTime is no less than 4 characters
-  @Test
-  void beginTimeIsNoLessThan4Characters() {
-    assertThrows(invalidTimeFormatException.class, () ->
-            new Appointment("description", "01/01/2021", "7:0", "01/01/2021", "09:00")
-    );
-  }
-
-  // Test that endTime is no more than 5 characters
-  @Test
-  void endTimeIsNoMoreThan5Characters() {
-    assertThrows(invalidTimeFormatException.class, () ->
-            new Appointment("description", "01/01/2021", "07:00", "01/01/2021", "09:000")
-    );
-  }
-
-  // Test that endTime is no less than 4 characters
-  @Test
-  void endTimeIsNoLessThan4Characters() {
-    assertThrows(invalidTimeFormatException.class, () ->
-            new Appointment("description", "01/01/2021", "07:00", "01/01/2021", "9:0")
-    );
-  }
+  // Removed tests related to date and time string lengths
+  // as these validations are no longer necessary with ZonedDateTime
 
   @Test
-  void forProject1ItIsOkayIfGetBeginTimeReturnsNull() throws invalidDescriptionException, invalidDateFormatException, invalidTimeFormatException {
-    Appointment appointment = new Appointment("description", "01/01/2021", "07:00", "01/01/2021", "9:00");
-    assertThat(appointment.getBeginTime(), is(nullValue()));
+  void forProject1ItIsOkayIfGetBeginTimeReturnsNonNull() throws Exception, invalidDescriptionException {
+    ZonedDateTime begin = createZonedDateTime("2021-01-01", "07:00");
+    ZonedDateTime end = createZonedDateTime("2021-01-01", "09:00");
+    Appointment appointment = new Appointment("description", begin, end);
+
+    assertThat(appointment.getBeginTime(), is(notNullValue()));
   }
 
 }

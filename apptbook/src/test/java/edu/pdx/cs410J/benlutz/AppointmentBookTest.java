@@ -1,5 +1,8 @@
 package edu.pdx.cs410J.benlutz;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 
 import org.checkerframework.checker.units.qual.A;
@@ -16,10 +19,18 @@ public class AppointmentBookTest {
     private AppointmentBook book;
     private Appointment appointment;
 
+
+    private ZonedDateTime createZonedDateTime(String date, String time) {
+        LocalDateTime localDateTime = LocalDateTime.parse(date + "T" + time);
+        return localDateTime.atZone(ZoneId.systemDefault());
+    }
+
     @BeforeEach
-    public void setUp() throws invalidDescriptionException, invalidDateFormatException, invalidTimeFormatException, invalidOwnerException {
+    public void setUp() throws invalidDescriptionException, invalidOwnerException {
         book = new AppointmentBook("Owner");
-        appointment = new Appointment("Description", "07/12/2021", "12:00", "07/12/2021", "13:00");
+        ZonedDateTime begin = createZonedDateTime("2000-11-30", "07:00");
+        ZonedDateTime end = createZonedDateTime("2000-11-30", "09:00");
+        appointment = new Appointment("Description", begin, end);
     }
 
     @Test

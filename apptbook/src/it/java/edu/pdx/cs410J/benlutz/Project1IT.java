@@ -12,20 +12,47 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class Project1IT extends InvokeMainTestCase {
 
   @Test
+  void missingEndTimePrintsErrorToStandardError() {
+    String[] args = {"Owner", "Description", "12/01/2020", "12:00", "12/01/2020"};
+    MainMethodResult result = invokeMain(Project1.class, args);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: Missing end time"));
+  }
+
+  @Test
+  void missingEndDateAndTimePrintsErrorToStandardError() {
+    String[] args = {"Owner", "Description", "12/01/2020", "12:00"};
+    MainMethodResult result = invokeMain(Project1.class, args);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: Missing end time"));
+  }
+
+  @Test
+  void invalidBeginDateFormatPrintsErrorToStandardError() {
+    String[] args = {"Owner", "Description", "12-01-2020", "12:00", "12/01/2020", "13:00"};
+    MainMethodResult result = invokeMain(Project1.class, args);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid begin date/time format:"));
+  }
+
+  @Test
+  void invalidBeginTimeFormatPrintsErrorToStandardError() {
+    String[] args = {"Owner", "Description", "12/01/2020", "12:XX", "12/01/2020", "13:00"};
+    MainMethodResult result = invokeMain(Project1.class, args);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid begin date/time format:"));
+  }
+
+  @Test
+  void invalidEndDateTimeFormatPrintsErrorToStandardError() {
+    String[] args = {"Owner", "Description", "12/01/2020", "12:00", "12-01-2020", "13:00"};
+    MainMethodResult result = invokeMain(Project1.class, args);
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid end date/time format:"));
+  }
+
+  @Test
   void invokingMainWithNoArgumentsPrintsMissingArgumentsToStandardError() {
     InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class);
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: No command line arguments"));
   }
 
   //When there are less than 6 arguments not including options
-  @Test
-  void missingCommandLineArgumentsPrintsErrorToStandardError() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "-print", "owner", "description",
-            "11/30/2000", "07:00", "11/30/2000");
-    assertThat(result.getTextWrittenToStandardError(), containsString("All fields are required (i.e. Owner Name, " +
-            "Description, Begin Date/Time, End Date/Time)"));
-  }
-
   @Test
   void unknownCommandLineOptionPrintsErrorToStandardError() {
     InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "-print", "-unknownOption", "owner", "description",
