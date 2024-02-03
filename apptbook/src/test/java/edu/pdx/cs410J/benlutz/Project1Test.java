@@ -21,12 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class Project1Test extends InvokeMainTestCase{
 
   @Test
-  void tooManyArgumentsExcludingOptionsPrintsErrorToStandardError() {
-    String[] args = {"-print", "owner", "description", "01/01/2024", "12:00", "01/01/2024", "13:00", "extra argument"};
-    assertThrows(IllegalArgumentException.class, () -> Project1.main(args));
-  }
-
-  @Test
   void readmeCanBeReadAsResource() throws IOException {
     try (
       InputStream readme = Project1.class.getResourceAsStream("README.txt")

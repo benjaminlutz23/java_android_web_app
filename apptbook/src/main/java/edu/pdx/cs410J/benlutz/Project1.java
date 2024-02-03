@@ -97,7 +97,7 @@ public class Project1 {
             endTime = arg;
             break;
           default:
-            throw new IllegalArgumentException("Too many arguments.");
+            System.err.println("Too many arguments.");
         }
         argCounter++;
       }
