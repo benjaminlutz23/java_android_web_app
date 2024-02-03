@@ -45,11 +45,21 @@ public class Appointment extends AbstractAppointment {
     }
   }
 
+  /**
+   * Retrieves the start time of the appointment
+   *
+   * @return null because we're not using it
+   */
   @Override
   public String getBeginTimeString() {
     return null;
   }
 
+  /**
+   * Retrieves the end time of the appointment
+   *
+   * @return null because we're not using it
+   */
   @Override
   public String getEndTimeString() {
     return null;
@@ -85,6 +95,12 @@ public class Appointment extends AbstractAppointment {
     return this.description;
   }
 
+
+  /**
+   * Display function since I can't override the toString method in the parent class
+   *
+   * @return A string with the description, the begin time, and the end time
+   */
   public final String display() {
     return this.getDescription() + " from " +
             this.getBeginTime() + " until " + this.getEndTime();
