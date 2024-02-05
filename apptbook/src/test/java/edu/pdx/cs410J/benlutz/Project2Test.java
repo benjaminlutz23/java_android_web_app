@@ -1,7 +1,6 @@
 package edu.pdx.cs410J.benlutz;
 
 import edu.pdx.cs410J.InvokeMainTestCase;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -18,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * from <code>Project1IT</code> which is an integration test (and can capture data
  * written to {@link System#out} and the like.
  */
-class Project1Test extends InvokeMainTestCase{
+class Project2Test extends InvokeMainTestCase{
 
   @Test
   void readmeCanBeReadAsResource() throws IOException {
     try (
-      InputStream readme = Project1.class.getResourceAsStream("README.txt")
+      InputStream readme = Project2.class.getResourceAsStream("README.txt")
     ) {
       assertThat(readme, not(nullValue()));
       BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
@@ -34,20 +33,20 @@ class Project1Test extends InvokeMainTestCase{
 
   @Test
   void readmeFlagPrintsReadmeToStandardOut() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "-README");
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project2.class, "-README");
     assertThat(result.getTextWrittenToStandardOut(), containsString("CS 510J Project 1: Appointment Book Application"));
   }
 
   @Test
   void printFlagPrintsAppointmentDetails() {
     String[] args = {"-print", "owner", "description", "01/01/2024", "12:00", "01/01/2024", "13:00"};
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, args);
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project2.class, args);
     assertThat(result.getTextWrittenToStandardOut(), containsString("description"));
   }
 
   @Test
   void invalidOptionPrintsErrorToStandardError() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project1.class, "-invalidOption");
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project2.class, "-invalidOption");
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: Invalid command line option"));
   }
 }

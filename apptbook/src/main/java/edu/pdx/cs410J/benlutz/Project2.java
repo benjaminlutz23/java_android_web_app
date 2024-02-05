@@ -1,14 +1,10 @@
 package edu.pdx.cs410J.benlutz;
 
-import com.google.common.annotations.VisibleForTesting;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.format.DateTimeParseException;
-import java.util.Objects;
-import java.text.ParseException;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -19,7 +15,7 @@ import java.time.ZoneId;
  * The main class for the Project 1 Appointment Book application.
  * This class handles the command-line interface for creating and managing an appointment book
  */
-public class Project1 {
+public class Project2 {
 
   /*
   @VisibleForTesting
@@ -168,7 +164,7 @@ public class Project1 {
    * This method reads the README information from a text file and prints it
    */
   private static void printReadme() {
-    try (InputStream readmeStream = Project1.class.getResourceAsStream("README.txt")) {
+    try (InputStream readmeStream = Project2.class.getResourceAsStream("README.txt")) {
         assert readmeStream != null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(readmeStream))) {
 
