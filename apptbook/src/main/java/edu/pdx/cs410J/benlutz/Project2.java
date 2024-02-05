@@ -1,9 +1,6 @@
 package edu.pdx.cs410J.benlutz;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
@@ -141,6 +138,14 @@ public class Project2 {
 
       // Add the appointment to the appointment book
       appointmentBook.addAppointment(appointment);
+
+      File file = new File("src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.txt");
+      try (Writer writer = new FileWriter(file)) {
+        TextDumper dumper = new TextDumper(writer);
+        dumper.dump(appointmentBook);
+      } catch (IOException e) {
+        e.printStackTrace(); // Handle exceptions appropriately
+      }
 
       if (printFlag) {
         System.out.println(appointmentBook);
