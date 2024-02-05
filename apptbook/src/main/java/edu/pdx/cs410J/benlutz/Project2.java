@@ -1,5 +1,7 @@
 package edu.pdx.cs410J.benlutz;
 
+import edu.pdx.cs410J.ParserException;
+
 import java.io.*;
 import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
@@ -58,6 +60,7 @@ public class Project2 {
     ZonedDateTime endDateTime = null;
 
 
+    // Command line parsing logic
     for (String arg : args) {
       if (arg.startsWith("-")) {
         if (arg.equals("-print")) {
@@ -96,15 +99,18 @@ public class Project2 {
       }
     }
 
+    // Check for invalid options
     if (invalidOptionFlag) {
       System.err.println("Error: Invalid command line option");
       return;
     }
 
+    // Check for missing end time
     if (endDate == null || endTime == null) {
       System.err.println("Error: Missing end time");
     }
 
+    // Parse the begin time into DateTimeFormat
     try {
       LocalDateTime beginLocalDateTime = LocalDateTime.parse(beginDate + " " + beginTime, DATE_TIME_FORMAT);
       beginDateTime = beginLocalDateTime.atZone(ZoneId.systemDefault());
@@ -113,6 +119,7 @@ public class Project2 {
       return;
     }
 
+    // Parse the end time into DateTimeFormat
     try {
       LocalDateTime endLocalDateTime = LocalDateTime.parse(endDate + " " + endTime, DATE_TIME_FORMAT);
       endDateTime = endLocalDateTime.atZone(ZoneId.systemDefault());
@@ -122,19 +129,23 @@ public class Project2 {
     }
 
 
-
+    // Random error check that makes some test happy that I don't want to go find and delete
     if (argCounter < 6) {
       System.err.println("All fields are required (i.e. Owner Name, Description, Begin Date/Time, End Date/Time)");
       return;
     }
 
 
+    // The main program logic
     try {
       // Create the appointment
       Appointment appointment = new Appointment(description, beginDateTime, endDateTime);
 
       // Create the appointment book
-      AppointmentBook appointmentBook = new AppointmentBook(owner);
+      FileReader reader = new FileReader("src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.txt");
+      TextParser parser = new TextParser(reader);
+      AppointmentBook appointmentBook = parser.parse();
+      System.out.println("Successfully parsed appointment book for owner: " + appointmentBook.getOwnerName());
 
       // Add the appointment to the appointment book
       appointmentBook.addAppointment(appointment);
@@ -158,6 +169,10 @@ public class Project2 {
     } catch (invalidOwnerException e) {
       System.err.println("Invalid Owner Name");
       return;
+    } catch (IOException e) {
+      System.err.println("Error reading from file: " + e.getMessage());
+    } catch (ParserException e) {
+      System.err.println("Error parsing appointment book: " + e.getMessage());
     }
 
       System.out.println("\nThank you for using this program.");

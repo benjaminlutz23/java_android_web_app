@@ -7,6 +7,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 
 /**
@@ -16,6 +19,8 @@ import java.io.Reader;
  */
 public class TextParser implements AppointmentBookParser<AppointmentBook> {
   private final Reader reader;
+  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+
 
   /**
    * Creates a new parser that reads an appointment book from a given reader
@@ -38,24 +43,39 @@ public class TextParser implements AppointmentBookParser<AppointmentBook> {
    */
   @Override
   public AppointmentBook parse() throws ParserException {
-    try (
-      BufferedReader br = new BufferedReader(this.reader)
-    ) {
 
+    try (BufferedReader br = new BufferedReader(this.reader)) {
       String owner = br.readLine();
-
-      if (owner == null) {
+      if (owner == null || owner.isEmpty()) {
         throw new ParserException("Missing owner");
       }
 
-      return new AppointmentBook(owner);
+      AppointmentBook book = new AppointmentBook(owner);
+      String line;
+      while ((line = br.readLine()) != null) {
+        String[] parts = line.split(", ");
+        if (parts.length != 3) {
+          throw new ParserException("Invalid appointment format in text file");
+        }
+        try {
+          String description = parts[0];
+          ZonedDateTime beginTime = ZonedDateTime.parse(parts[1], DATE_TIME_FORMATTER);
+          ZonedDateTime endTime = ZonedDateTime.parse(parts[2], DATE_TIME_FORMATTER);
+
+          Appointment appointment = new Appointment(description, beginTime, endTime);
+          book.addAppointment(appointment);
+        } catch (DateTimeParseException e) {
+          throw new ParserException("Error parsing date/time: " + e.getMessage());
+        } catch (invalidDescriptionException e) {
+          throw new ParserException("Invalid appointment description: " + e.getMessage());
+        }
+      }
+      return book;
 
     } catch (IOException e) {
-      throw new ParserException("While parsing appointment book text", e);
+      throw new ParserException("Error reading from file: " + e.getMessage());
     } catch (invalidOwnerException e) {
-      System.err.println("Invalid owner name");
+      throw new ParserException("Invalid owner name: " + e.getMessage());
     }
-
-      return null;
   }
 }
