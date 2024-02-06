@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -43,7 +45,6 @@ public class TextParser implements AppointmentBookParser<AppointmentBook> {
    */
   @Override
   public AppointmentBook parse() throws ParserException {
-
     try (BufferedReader br = new BufferedReader(this.reader)) {
       String owner = br.readLine();
       if (owner == null || owner.isEmpty()) {
@@ -59,10 +60,15 @@ public class TextParser implements AppointmentBookParser<AppointmentBook> {
         }
         try {
           String description = parts[0];
-          ZonedDateTime beginTime = ZonedDateTime.parse(parts[1], DATE_TIME_FORMATTER);
-          ZonedDateTime endTime = ZonedDateTime.parse(parts[2], DATE_TIME_FORMATTER);
+          LocalDateTime beginTime = LocalDateTime.parse(parts[1], DATE_TIME_FORMATTER);
+          LocalDateTime endTime = LocalDateTime.parse(parts[2], DATE_TIME_FORMATTER);
 
-          Appointment appointment = new Appointment(description, beginTime, endTime);
+          // Assuming your system's default timezone is appropriate
+          ZoneId zone = ZoneId.systemDefault();
+          ZonedDateTime zonedBeginTime = beginTime.atZone(zone);
+          ZonedDateTime zonedEndTime = endTime.atZone(zone);
+
+          Appointment appointment = new Appointment(description, zonedBeginTime, zonedEndTime);
           book.addAppointment(appointment);
         } catch (DateTimeParseException e) {
           throw new ParserException("Error parsing date/time: " + e.getMessage());

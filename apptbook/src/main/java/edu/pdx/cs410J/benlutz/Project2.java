@@ -40,13 +40,15 @@ public class Project2 {
       return;
     }
 
-    if (args.length > 8) {
+    if (args.length > 10) {
       System.err.println("Too many command line arguments");
       return;
     }
 
     boolean printFlag = false;
+    boolean fileFlag = false;
     boolean invalidOptionFlag = false;
+    String fileName = null;
     String owner = null;
     String description = null;
     String beginDate = null;
@@ -61,16 +63,32 @@ public class Project2 {
 
 
     // Command line parsing logic
-    for (String arg : args) {
+    for (int i = 0; i < args.length; i++) {
+      String arg = args[i];
       if (arg.startsWith("-")) {
-        if (arg.equals("-print")) {
-          printFlag = true;
-        } else if (arg.equals("-README")) {
-          printReadme();
-          return;
-        } else {
-          invalidOptionFlag = true;
-        }
+          switch (arg) {
+            case "-print":
+              printFlag = true;
+              break;
+            case "-README":
+              printReadme();
+              return;
+            case "-textFile":
+                fileFlag = true;
+                // Ensure there is another argument after "-textFile"
+                if (i + 1 < args.length) {
+                    fileName = args[i + 1];
+                    i++; // Skip the next argument since it's used as the fileName
+                } else {
+                    // Handle the case where "-textFile" is the last argument without a following file name
+                    System.err.println("Error: -textFile option requires a file name");
+                    return;
+                }
+                break;
+
+            default:
+              invalidOptionFlag = true;
+          }
         optCounter++;
       } else {
         switch (argCounter) {
@@ -140,22 +158,28 @@ public class Project2 {
     try {
       // Create the appointment
       Appointment appointment = new Appointment(description, beginDateTime, endDateTime);
+      AppointmentBook appointmentBook;
 
       // Create the appointment book
-      FileReader reader = new FileReader("src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.txt");
-      TextParser parser = new TextParser(reader);
-      AppointmentBook appointmentBook = parser.parse();
-      System.out.println("Successfully parsed appointment book for owner: " + appointmentBook.getOwnerName());
+      if (fileFlag) {
+        FileReader reader = new FileReader(fileName);
+        TextParser parser = new TextParser(reader);
+        appointmentBook = parser.parse();
+        System.out.println("Successfully parsed appointment book for owner: " + appointmentBook.getOwnerName());
 
-      // Add the appointment to the appointment book
-      appointmentBook.addAppointment(appointment);
+        // Add the appointment to the appointment book
+        appointmentBook.addAppointment(appointment);
 
-      File file = new File("src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.txt");
-      try (Writer writer = new FileWriter(file)) {
-        TextDumper dumper = new TextDumper(writer);
-        dumper.dump(appointmentBook);
-      } catch (IOException e) {
-        e.printStackTrace(); // Handle exceptions appropriately
+        File file = new File(fileName);
+        try (Writer writer = new FileWriter(file)) {
+          TextDumper dumper = new TextDumper(writer);
+          dumper.dump(appointmentBook);
+        } catch (IOException e) {
+          System.err.println("Error writing to file");
+        }
+      } else {
+        appointmentBook = new AppointmentBook(owner);
+        appointmentBook.addAppointment(appointment);
       }
 
       if (printFlag) {
@@ -175,7 +199,7 @@ public class Project2 {
       System.err.println("Error parsing appointment book: " + e.getMessage());
     }
 
-      System.out.println("\nThank you for using this program.");
+    System.out.println("\nThank you for using this program.");
   }
 
   /**
