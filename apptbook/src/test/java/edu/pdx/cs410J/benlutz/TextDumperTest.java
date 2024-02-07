@@ -16,27 +16,46 @@ public class TextDumperTest {
 
   private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
 
-  @Test
-  void appointmentBookOwnerAndAppointmentsAreDumpedInTextFormat() throws IOException, invalidOwnerException, invalidDescriptionException {
-    String owner = "Test Appointment Book";
-    ZonedDateTime beginTime = ZonedDateTime.now();
-    ZonedDateTime endTime = beginTime.plusHours(1);
-    Appointment appointment = new Appointment("Test Description", beginTime, endTime);
-    AppointmentBook book = new AppointmentBook(owner);
-    book.addAppointment(appointment);
 
+  @Test
+  void appointmentBookOwnerIsDumpedInTextFormat() throws invalidOwnerException {
+    // Create an appointment book with a specific owner
+    String owner = "Test Appointment Book";
+    AppointmentBook book = new AppointmentBook(owner);
+
+    // Dump the appointment book to text format
     StringWriter sw = new StringWriter();
     TextDumper dumper = new TextDumper(sw);
     dumper.dump(book);
 
+    // Verify that the owner's name is correctly dumped
     String text = sw.toString();
     assertThat(text, containsString(owner));
+  }
+
+  @Test
+  void appointmentDetailsAreDumpedInTextFormat() throws invalidOwnerException, invalidDescriptionException {
+    // Create an appointment with specific details
+    ZonedDateTime beginTime = ZonedDateTime.now();
+    ZonedDateTime endTime = beginTime.plusHours(1);
+    Appointment appointment = new Appointment("Test Description", beginTime, endTime);
+    AppointmentBook book = new AppointmentBook("Test Appointment Book");
+    book.addAppointment(appointment);
+
+    // Dump the appointment book to text format
+    StringWriter sw = new StringWriter();
+    TextDumper dumper = new TextDumper(sw);
+    dumper.dump(book);
+
+    // Verify that the appointment details are correctly dumped
+    String text = sw.toString();
     String expectedAppointmentString = String.format("%s, %s, %s",
             appointment.getDescription(),
             DATE_TIME_FORMATTER.format(beginTime),
             DATE_TIME_FORMATTER.format(endTime));
     assertThat(text, containsString(expectedAppointmentString));
   }
+
 
 
   // Do this one after writing the text parser class
