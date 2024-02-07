@@ -48,10 +48,11 @@ public class TextParser implements AppointmentBookParser<AppointmentBook> {
     try (BufferedReader br = new BufferedReader(this.reader)) {
       String owner = br.readLine();
       if (owner == null || owner.isEmpty()) {
-        throw new ParserException("Missing owner");
+        owner = null;
       }
 
       AppointmentBook book = new AppointmentBook(owner);
+
       String line;
       while ((line = br.readLine()) != null) {
         String[] parts = line.split(", ");
