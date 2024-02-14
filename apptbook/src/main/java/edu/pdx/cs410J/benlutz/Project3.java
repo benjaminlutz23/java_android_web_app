@@ -15,7 +15,7 @@ import java.util.Objects;
  * The main class for the Project 1 Appointment Book application.
  * This class handles the command-line interface for creating and managing an appointment book
  */
-public class Project2 {
+public class Project3 {
 
   /*
   @VisibleForTesting
@@ -225,7 +225,7 @@ public class Project2 {
    * This method reads the README information from a text file and prints it
    */
   private static void printReadme() {
-    try (InputStream readmeStream = Project2.class.getResourceAsStream("README.txt")) {
+    try (InputStream readmeStream = Project3.class.getResourceAsStream("README.txt")) {
         assert readmeStream != null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(readmeStream))) {
 
