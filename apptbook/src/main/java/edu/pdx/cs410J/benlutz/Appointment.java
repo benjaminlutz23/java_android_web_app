@@ -2,8 +2,9 @@ package edu.pdx.cs410J.benlutz;
 
 import edu.pdx.cs410J.AbstractAppointment;
 
+import java.time.format.FormatStyle;
+import java.util.Locale;
 import java.util.Objects;
-import java.text.ParseException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ import java.time.ZoneId;
  */
 public class Appointment extends AbstractAppointment {
 
-  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(Locale.US);
   /**
    * The description of the appointment.
    */
@@ -36,13 +37,13 @@ public class Appointment extends AbstractAppointment {
    * @throws invalidDescriptionException if the description is empty
    */
   public Appointment(String description, ZonedDateTime beginTime, ZonedDateTime endTime) throws invalidDescriptionException {
-    this.description = description;
-    this.beginTime = beginTime;
-    this.endTime = endTime;
-
     if (Objects.equals(description, "")){
       throw new invalidDescriptionException("Cannot be empty");
     }
+
+    this.description = description;
+    this.beginTime = beginTime;
+    this.endTime = endTime;
   }
 
   /**
@@ -52,7 +53,7 @@ public class Appointment extends AbstractAppointment {
    */
   @Override
   public String getBeginTimeString() {
-    return null;
+    return DATE_TIME_FORMAT.format(this.beginTime);
   }
 
   /**
@@ -62,7 +63,7 @@ public class Appointment extends AbstractAppointment {
    */
   @Override
   public String getEndTimeString() {
-    return null;
+    return DATE_TIME_FORMAT.format(this.endTime);
   }
 
   /**
