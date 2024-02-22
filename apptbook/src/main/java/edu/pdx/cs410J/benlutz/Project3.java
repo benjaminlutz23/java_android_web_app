@@ -24,7 +24,7 @@ public class Project3 {
   }
   */
 
-  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("[M/d/yyyy][MM/dd/yyyy][MM/d/yyyy][M/dd/yyyy] [H:mm][HH:mm]");
+  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("[M/d/yyyy][MM/dd/yyyy][MM/d/yyyy][M/dd/yyyy] [H:mm][HH:mm] a VV");
 
   /**
    * The main entry point for the Appointment Book application
@@ -56,6 +56,8 @@ public class Project3 {
       String endDate = null;
       String beginTime = null;
       String endTime = null;
+      String beginZoneID = null;
+      String endZoneID = null;
       int argCounter = 0;
 
       ZonedDateTime beginDateTime = null;
@@ -101,13 +103,21 @@ public class Project3 {
                       beginDate = arg;
                       break;
                   case 3:
-                      beginTime = arg;
+                      beginTime = args[i] + " " + args[i+1];
+                      i++;
                       break;
                   case 4:
-                      endDate = arg;
+                      beginZoneID = arg;
                       break;
                   case 5:
-                      endTime = arg;
+                      endDate = arg;
+                      break;
+                  case 6:
+                      endTime = args[i] + " " + args[i+1];
+                      i++;
+                      break;
+                  case 7:
+                      endZoneID = arg;
                       break;
                   default:
                       System.err.println("Too many arguments.");
@@ -127,23 +137,22 @@ public class Project3 {
           System.err.println("Error: Missing end time");
       }
 
-      // Parse the begin time into DateTimeFormat
+      // Parse the begin time into ZonedDateTime
       try {
-          LocalDateTime beginLocalDateTime = LocalDateTime.parse(beginDate + " " + beginTime, DATE_TIME_FORMAT);
-          beginDateTime = beginLocalDateTime.atZone(ZoneId.systemDefault());
+          beginDateTime = ZonedDateTime.parse(beginDate + " " + beginTime + " " + beginZoneID, DATE_TIME_FORMAT);
       } catch (DateTimeParseException e) {
           System.err.println("Invalid begin date/time format: " + e.getMessage());
           return;
       }
 
-      // Parse the end time into DateTimeFormat
+      // Parse the end time into ZonedDateTime
       try {
-          LocalDateTime endLocalDateTime = LocalDateTime.parse(endDate + " " + endTime, DATE_TIME_FORMAT);
-          endDateTime = endLocalDateTime.atZone(ZoneId.systemDefault());
+          endDateTime = ZonedDateTime.parse(endDate + " " + endTime + " " + endZoneID, DATE_TIME_FORMAT);
       } catch (DateTimeParseException e) {
           System.err.println("Invalid end date/time format: " + e.getMessage());
           return;
       }
+
 
 
       // Random error check that makes some test happy that I don't want to go find and delete
