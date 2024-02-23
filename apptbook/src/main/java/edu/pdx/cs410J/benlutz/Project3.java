@@ -41,7 +41,7 @@ public class Project3 {
           return;
       }
 
-      if (args.length > 10) {
+      if (args.length > 14) {
           System.err.println("Too many command line arguments");
           return;
       }
