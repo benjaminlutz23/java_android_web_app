@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class TextDumperTest {
 
-  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm a VV");
 
 
   @Test

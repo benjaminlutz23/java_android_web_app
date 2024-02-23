@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 public class TextDumper implements AppointmentBookDumper<AppointmentBook> {
   private final Writer writer;
-  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm a VV");
 
   /**
    * Constructs a new TextDumper that writes to a specified {@link Writer}
