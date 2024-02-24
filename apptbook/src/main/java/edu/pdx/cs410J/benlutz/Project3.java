@@ -24,7 +24,7 @@ public class Project3 {
   }
   */
 
-  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("[M/d/yyyy][MM/dd/yyyy][MM/d/yyyy][M/dd/yyyy] [H:mm][HH:mm] a VV");
+  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");
 
   /**
    * The main entry point for the Appointment Book application

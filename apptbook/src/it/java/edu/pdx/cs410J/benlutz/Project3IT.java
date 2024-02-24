@@ -33,13 +33,12 @@ class Project3IT extends InvokeMainTestCase {
     System.setErr(System.err); // Reset System.err to its original stream
   }
 
-  @Disabled
   @Test
   public void invalidFilePathFormatShowsError() {
     ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     System.setErr(new PrintStream(errContent));
 
-    String[] args = {"-textFile", "invalid/?path.txt", "owner", "description", "01/01/2020", "12:00", "pm", "America/LosAngeles", "01/01/2020", "1:00", "pm", "America/LosAngeles"};
+    String[] args = {"-textFile", "invalid/?path.txt", "owner", "description", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
     try {
       Project3.main(args);
     } catch (Exception | invalidDescriptionException | invalidOwnerException e) {
@@ -58,7 +57,7 @@ class Project3IT extends InvokeMainTestCase {
     File file = new File(fileName);
     file.delete(); // Ensure the file does not exist before the test
 
-    String[] args = {"-textFile", fileName, "owner", "description",  "01/01/2020", "12:00", "pm", "America/LosAngeles", "01/01/2020", "1:00", "pm", "America/LosAngeles"};
+    String[] args = {"-textFile", fileName, "owner", "description",  "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
     Project3.main(args);
 
     assertTrue(file.exists());
@@ -72,7 +71,7 @@ class Project3IT extends InvokeMainTestCase {
     File file = new File(fileName);
     file.delete(); // Ensure the file does not exist before the test
 
-    String[] args = {"-textFile", fileName, "owner", "description", "01/01/2020", "12:00", "01/01/2020", "13:00"};
+    String[] args = {"-textFile", fileName, "owner", "description", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
     Project3.main(args);
 
     assertTrue(file.exists());
@@ -87,7 +86,7 @@ class Project3IT extends InvokeMainTestCase {
     File file = new File(fileName);
     file.delete(); // Ensure the file does not exist before the test
 
-    String[] args = {"-textFile", fileName, "owner", "description", "01/01/2020", "12:00", "01/01/2020", "13:00"};
+    String[] args = {"-textFile", fileName, "owner", "description",  "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
     try {
       Project3.main(args);
     } catch (invalidDescriptionException | invalidOwnerException e) {
@@ -122,7 +121,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void testParsingAppointmentBookReadsCorrectContent() throws IOException, ParserException {
-    String content = "Test Owner\nTest Appointment, 01/01/2020 12:00, 01/01/2020 13:00";
+    String content = "Test Owner\nTest Appointment, 01/01/2020 12:00 PM America/Los_Angeles, 01/01/2020 1:00 PM America/Los_Angeles";
     File tempFile = File.createTempFile("testAppointmentBook", ".txt");
     try (Writer writer = new FileWriter(tempFile)) {
       writer.write(content);
@@ -145,7 +144,7 @@ class Project3IT extends InvokeMainTestCase {
     ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     System.setErr(new PrintStream(errContent));
 
-    Project3.main(new String[]{"-textFile", "src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.txt", "MismatchedOwner", "Meeting", "01/01/2023", "09:00", "01/01/2023", "10:00"});
+    Project3.main(new String[]{"-textFile", "src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.txt", "MismatchedOwner", "Meeting", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"});
 
     String expectedError = "The owner name you provided does not match the owner name in the text file.";
     assertTrue(errContent.toString().contains(expectedError));
@@ -162,7 +161,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void missingEndDateAndTimePrintsErrorToStandardError() {
-    String[] args = {"Owner", "Description", "12/01/2020", "12:00"};
+    String[] args = {"Owner", "Description", "01/01/2020", "12:00", "PM", "America/Los_Angeles"};
     MainMethodResult result = invokeMain(Project3.class, args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: Missing end time"));
   }
@@ -183,7 +182,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void invalidEndDateTimeFormatPrintsErrorToStandardError() {
-    String[] args = {"Owner", "Description", "12/01/2020", "12:00", "12-01-2020", "13:00"};
+    String[] args = {"Owner", "Description", "01/01/2020", "12:00", "PM", "America/Los_Angeles"};
     MainMethodResult result = invokeMain(Project3.class, args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid end date/time format:"));
   }
@@ -205,7 +204,7 @@ class Project3IT extends InvokeMainTestCase {
   @Test
   void tooManyCommandLineArgumentsPrintsErrorToStandardError() {
     InvokeMainTestCase.MainMethodResult result = invokeMain(Project3.class, "Arg1", "Arg2", "Arg3", "Arg4", "Arg5",
-            "Arg6", "Arg7", "Arg8", "Arg9", "Arg10", "Arg11");
+            "Arg6", "Arg7", "Arg8", "Arg9", "Arg10", "Arg11", "Arg12", "Arg13", "Arg14", "Arg15");
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
   }
 
