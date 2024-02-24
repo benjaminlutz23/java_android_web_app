@@ -21,7 +21,7 @@ import java.time.format.DateTimeParseException;
  */
 public class TextParser implements AppointmentBookParser<AppointmentBook> {
   private final Reader reader;
-  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");
 
 
   /**
@@ -61,15 +61,10 @@ public class TextParser implements AppointmentBookParser<AppointmentBook> {
         }
         try {
           String description = parts[0];
-          LocalDateTime beginTime = LocalDateTime.parse(parts[1], DATE_TIME_FORMATTER);
-          LocalDateTime endTime = LocalDateTime.parse(parts[2], DATE_TIME_FORMATTER);
+          ZonedDateTime beginTime = ZonedDateTime.parse(parts[1], DATE_TIME_FORMATTER);
+          ZonedDateTime endTime = ZonedDateTime.parse(parts[2], DATE_TIME_FORMATTER);
 
-          // Assuming your system's default timezone is appropriate
-          ZoneId zone = ZoneId.systemDefault();
-          ZonedDateTime zonedBeginTime = beginTime.atZone(zone);
-          ZonedDateTime zonedEndTime = endTime.atZone(zone);
-
-          Appointment appointment = new Appointment(description, zonedBeginTime, zonedEndTime);
+          Appointment appointment = new Appointment(description, beginTime, endTime);
           book.addAppointment(appointment);
         } catch (DateTimeParseException e) {
           throw new ParserException("Error parsing date/time: " + e.getMessage());
