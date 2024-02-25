@@ -2,9 +2,7 @@ package edu.pdx.cs410J.benlutz;
 
 import edu.pdx.cs410J.AbstractAppointmentBook;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents an appointment book that holds a collection of {@link Appointment} objects.
@@ -18,9 +16,9 @@ public class AppointmentBook extends AbstractAppointmentBook<Appointment> {
   private final String owner;
 
   /**
-   * A collection of appointments in the appointment book.
+   * A sorted set of appointments in the appointment book.
    */
-  private final Collection<Appointment> appointments;
+  private final SortedSet<Appointment> appointments;
 
   /**
    * Constructs a new AppointmentBook with the specified owner's name
@@ -34,7 +32,7 @@ public class AppointmentBook extends AbstractAppointmentBook<Appointment> {
     }
 
     this.owner = owner;
-    this.appointments = new ArrayList<>();
+    this.appointments = new TreeSet<>();
   }
 
   /**

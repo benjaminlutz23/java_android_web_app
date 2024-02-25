@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.time.format.DateTimeFormatter;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 
 import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +69,50 @@ public class AppointmentBookTest {
         Collection<Appointment> appointments = book.getAppointments();
         assertFalse(appointments.isEmpty());
         assertTrue(appointments.contains(appointment));
+    }
+
+    @Test
+    public void appointmentsAreSortedCorrectly() throws invalidDescriptionException, invalidOwnerException {
+        AppointmentBook book = new AppointmentBook("Test Owner");
+
+        DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");
+
+        // Creating appointments with various start/end times and descriptions
+        Appointment appt1 = new Appointment("Meeting",
+                ZonedDateTime.parse("01/01/2023 10:00 AM America/Los_Angeles", DATE_TIME_FORMAT),
+                ZonedDateTime.parse("01/01/2023 11:00 AM America/Los_Angeles", DATE_TIME_FORMAT));
+
+        Appointment appt2 = new Appointment("Appointment",
+                ZonedDateTime.parse("01/01/2023 9:00 AM America/Los_Angeles", DATE_TIME_FORMAT),
+                ZonedDateTime.parse("01/01/2023 10:00 AM America/Los_Angeles", DATE_TIME_FORMAT));
+
+        Appointment appt3 = new Appointment("Another Meeting",
+                ZonedDateTime.parse("01/01/2023 10:00 AM America/Los_Angeles", DATE_TIME_FORMAT),
+                ZonedDateTime.parse("01/01/2023 12:00 PM America/Los_Angeles", DATE_TIME_FORMAT));
+
+        Appointment appt4 = new Appointment("Follow-up",
+                ZonedDateTime.parse("01/01/2023 10:00 AM America/Los_Angeles", DATE_TIME_FORMAT),
+                ZonedDateTime.parse("01/01/2023 11:00 AM America/Los_Angeles", DATE_TIME_FORMAT));
+
+        // Adding appointments out of order
+        book.addAppointment(appt1);
+        book.addAppointment(appt2);
+        book.addAppointment(appt3);
+        book.addAppointment(appt4);
+
+        // Retrieve the sorted appointments
+        SortedSet<Appointment> sortedAppointments = new TreeSet<>(book.getAppointments());
+
+        // Verify the order
+        assertEquals(sortedAppointments.first(), appt2, "First appointment should be the earliest");
+        assertEquals(sortedAppointments.last(), appt3, "Last appointment should be the one with the latest end time");
+
+        // Convert to array to check specific order
+        Appointment[] appointmentsArray = sortedAppointments.toArray(new Appointment[0]);
+        assertTrue(appointmentsArray[1].equals(appt1) || appointmentsArray[1].equals(appt4),
+                "Second or third should be 'Meeting' or 'Follow-up' due to the same start time but sorted lexicographically by their descriptions");
+        assertTrue(appointmentsArray[2].equals(appt1) || appointmentsArray[2].equals(appt4),
+                "Second or third should be 'Meeting' or 'Follow-up' due to the same start time but sorted lexicographically by their descriptions");
     }
 
 }

@@ -2,13 +2,11 @@ package edu.pdx.cs410J.benlutz;
 
 import edu.pdx.cs410J.AbstractAppointment;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Objects;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 
 /**
@@ -16,7 +14,7 @@ import java.time.ZoneId;
  * This class extends {@link AbstractAppointment} and provides detailed information
  * about an appointment including its description and timing
  */
-public class Appointment extends AbstractAppointment {
+public class Appointment extends AbstractAppointment implements Comparable<Appointment>{
 
   private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(Locale.US);
   /**
@@ -105,6 +103,17 @@ public class Appointment extends AbstractAppointment {
   public final String display() {
     return this.getDescription() + " from " +
             this.getBeginTime() + " until " + this.getEndTime();
+  }
+
+  @Override
+  public int compareTo(Appointment other) {
+    int beginTimeComparison = this.beginTime.compareTo(other.beginTime);
+    if (beginTimeComparison != 0) return beginTimeComparison;
+
+    int endTimeComparison = this.endTime.compareTo(other.endTime);
+    if (endTimeComparison != 0) return endTimeComparison;
+
+    return this.description.compareToIgnoreCase(other.description);
   }
 }
 
