@@ -236,7 +236,7 @@ public class Project3 {
             appointmentBook.addAppointment(appointment);
         }
 
-        if (printFlag) {
+        if (prettyFlag) {
             if (prettyStdOutFlag) {
                 // Pretty print to stdout
             }
