@@ -48,8 +48,11 @@ public class Project3 {
 
       boolean printFlag = false;
       boolean fileFlag = false;
+      boolean prettyFlag = false;
+      boolean prettyStdOutFlag = false;
       boolean invalidOptionFlag = false;
       String fileName = null;
+      String prettyFileName = null;
       String owner = null;
       String description = null;
       String beginDate = null;
@@ -84,6 +87,25 @@ public class Project3 {
                       } else {
                           // Handle the case where "-textFile" is the last argument without a following file name
                           System.err.println("Error: -textFile option requires a file name");
+                          return;
+                      }
+                      break;
+                  case "-pretty":
+                      prettyFlag = true;
+                      // Ensure there is another argument after "-pretty"
+                      if (i + 1 < args.length) {
+                          // Get the filename if there is one
+                          if (!Objects.equals(args[i + 1], "-")) {
+                              prettyFileName = args[i + 1];
+                          }
+                          // Otherwise just print to stdout
+                          else {
+                              prettyStdOutFlag = true;
+                          }
+                          i++; // Skip the next argument since it's used as the fileName
+                      } else {
+                          // Handle the case where "-pretty" is the last argument without a following file name
+                          System.err.println("Error: -pretty option requires an argument");
                           return;
                       }
                       break;
@@ -213,6 +235,16 @@ public class Project3 {
             appointmentBook = new AppointmentBook(owner);
             appointmentBook.addAppointment(appointment);
         }
+
+        if (printFlag) {
+            if (prettyStdOutFlag) {
+                // Pretty print to stdout
+            }
+            else {
+                // Pretty print to the file
+            }
+        }
+
 
         if (printFlag) {
             System.out.println(appointmentBook);
