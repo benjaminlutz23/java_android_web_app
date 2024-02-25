@@ -262,12 +262,16 @@ public class Project3 {
         "    owner        - The person who owns the appt book\n" +
         "    description  - A description of the appointment\n" +
         "    beginDate    - When the appt begins (mm/dd/yyyy)\n" +
-        "    beginTime    - When the appt begins (hh:mm)\n" +
+        "    beginTime    - When the appt begins (hh:mm am/pm ZoneID)\n" +
         "    endDate      - When the appt ends (mm/dd/yyyy)\n" +
-        "    endTime      - When the appt ends (hh:mm)\n" +
+        "    endTime      - When the appt ends (hh:mm am/pm ZoneID)\n" +
         "  Optional command line arguments (options may appear in any order):\n" +
-        "    -print       - Prints a description of the new appointment\n" +
-        "    -README      - Prints a README for this project and exits\n" +
-        "Note: Date and time should be in 24-hour format. For multi-word descriptions or owner names, enclose them in quotes.");
+        "    -print             - Prints a description of the new appointment\n" +
+        "    -README            - Prints a README for this project and exits\n" +
+        "    -textFile file     - Where to read/write the appointment book info\n" +
+        "    -pretty file       - Pretty print the appointment book to standard out or " +
+            "                     a text file (by specifying a 'file')\n" +
+        "Note: Date and time should be in 12-hour format, and should specify a valid zone ID.\n" +
+        "      For multi-word descriptions or owner names, enclose them in quotes.");
   }
 }

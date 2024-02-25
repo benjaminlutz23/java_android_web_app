@@ -15,24 +15,31 @@ When you're ready to run the program, type the follow in this order:
 Arguments: All arguments are required, and must be entered in the following order:
     owner: The name of the person who owns the appointment book. May be first and last name, or just a single name.
     description: A brief description of the appointment.
-    begin: The date and time that the appointment begins in the format mm/dd/yyyy hh:mm. Note that the time must be
-        in 24hr clock notation as "am/pm" will not be interpreted by the program.
-    end: Same as "begin," but for the end time of the appointment.
+    begin: The date and time that the appointment begins in the format MM/dd/yyyy hh:mm a VV
+        (e.g., 01/02/2023 9:16 PM America/Los_Angeles). The time must include AM/PM and a valid timezone ID.
+    end: Same format as "begin," but for when the appointment ends.
 
 Options: These may appear in any order:
     -print: Prints information about the appointment you just entered.
     -README: Prints a README for this project and exits. Note that even if other options/arguments were specified,
         nothing will happen besides displaying the README.
+    -textFile file: Specifies a file path to read/write the appointment book information.
+    -pretty file: Pretty prints the appointment book to a specified file, or standard out if the file argument is -.
+        This includes the duration of each appointment in minutes.
 
 Here are some examples of how the program might be used:
 
     java -jar target/apptbook-1.0.0.jar -README
 
-    java -jar target/apptbook-1.0.0.jar "Benjamin" "Meet with Jake" 11/30/2022 11:00 11/30/2022 14:00
+    java -jar target/apptbook-1.0.0.jar "Benjamin" "Meet with Jake" 01/30/2023 9:00 AM America/Los_Angeles 01/30/2023 10:00 AM America/Los_Angeles
 
-    java -jar target/apptbook-1.0.0.jar -print "Benjamin" "Meet with Jake" 11/30/2022 11:00 11/30/2022 14:00
+    java -jar target/apptbook-1.0.0.jar -print "Benjamin" "Meet with Jake" 01/30/2023 9:00 AM America/Los_Angeles 01/30/2023 10:00 AM America/Los_Angeles
 
-    java -jar target/apptbook-1.0.0.jar -print "Benjamin Lutz" "Meet with Jake" 11/30/2022 11:00 11/30/2022 14:00
+    java -jar target/apptbook-1.0.0.jar -pretty myFile "Benjamin Lutz" "Strategy Meeting" 02/01/2023 1:30 PM America/New_York 02/01/2023 2:30 PM America/New_York
+
+    java -jar target/apptbook-1.0.0.jar -pretty "Benjamin Lutz" "Strategy Meeting" 02/01/2023 1:30 PM America/New_York 02/01/2023 2:30 PM America/New_York
+
+    java -jar target/apptbook-1.0.0.jar -textFile myFile "Benjamin Lutz" "Strategy Meeting" 02/01/2023 1:30 PM America/New_York 02/01/2023 2:30 PM America/New_York
 
 Error Handling: This program handles user errors.  If there is an error caused by input from the command line,
 an error message will be displayed, and you may have to try running the program again in order to continue.
