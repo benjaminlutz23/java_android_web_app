@@ -175,7 +175,11 @@ public class Project3 {
             return;
         }
 
-
+        // Check if the begin time is after the end time
+        if (beginDateTime.isAfter(endDateTime)) {
+            System.err.println("Error: The begin time must be before the end time.");
+            return; // Exit the program
+        }
 
         // Random error check that makes some test happy that I don't want to go find and delete
         if (argCounter < 6) {

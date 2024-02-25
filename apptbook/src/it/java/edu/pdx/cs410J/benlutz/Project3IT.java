@@ -2,6 +2,7 @@ package edu.pdx.cs410J.benlutz;
 
 import edu.pdx.cs410J.InvokeMainTestCase;
 import edu.pdx.cs410J.ParserException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration tests for the {@link Project3} main class.
  */
 class Project3IT extends InvokeMainTestCase {
+  @Test
+  public void beginTimeAfterEndTimeShowsError() throws invalidDescriptionException, invalidOwnerException {
+    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(errContent));
+
+    // Providing command line arguments that simulate begin time after end time
+    String[] args = {
+            "owner", "description",
+            "01/01/2023", "10:00", "AM", "America/New_York",
+            "01/01/2023", "9:00", "AM", "America/New_York"
+    };
+    Project3.main(args);
+
+    // The expected error message when the begin time is after the end time
+    String expectedError = "Error: The begin time must be before the end time.";
+    assertTrue(errContent.toString().contains(expectedError), "The expected error message was not found.");
+
+    System.setErr(System.err); // Reset System.err to its original stream
+  }
 
   @Test
   public void textFileOptionWithoutFileNameShowsError() throws invalidDescriptionException, invalidOwnerException {
