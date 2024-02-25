@@ -253,7 +253,7 @@ public class Project3 {
                 } catch (IOException e) {
                     System.err.println("Error writing to pretty print file: " + e.getMessage());
                 } finally {
-                    if (writer != null && !prettyFileName.equals("-")) {
+                    if (writer != null && !prettyStdOutFlag) {
                         writer.close(); // Close the writer if it's not System.out
                     }
                 }
