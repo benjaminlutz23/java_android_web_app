@@ -22,17 +22,6 @@
             <date day="1" month="2" year="2023"/>
             <time hour="14" minute="30" time-zone="America/New_York"/>
         </end>
-        <description>Meeting</description>
-    </appt>
-    <appt>
-        <begin>
-            <date day="1" month="2" year="2023"/>
-            <time hour="13" minute="0" time-zone="America/New_York"/>
-        </begin>
-        <end>
-            <date day="1" month="2" year="2023"/>
-            <time hour="14" minute="30" time-zone="America/New_York"/>
-        </end>
-        <description>Shootn the shit with homies</description>
+        <description>Hello</description>
     </appt>
 </apptbook>
