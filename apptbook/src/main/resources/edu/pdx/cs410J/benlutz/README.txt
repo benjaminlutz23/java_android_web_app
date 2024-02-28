@@ -46,6 +46,13 @@ Here are some examples of how the program might be used:
     java -jar target/apptbook-1.0.0.jar -xmlFile myFile.xml "Benjamin Lutz" "Strategy Meeting" 02/01/2023 1:30 PM America/New_York 02/01/2023 2:30 PM America/New_York
 
 
+To convert from a text file to an xml file, the program needs to be run like this:
+
+    java -cp target/apptbook-1.0.0.jar edu.pdx.cs410J.benlutz.Converter myTextFile.txt myXmlFile.xml
+
+where myTextFile.txt is the text file you are converting and myXmlFile.xml is the xml file you are converting to.
+
+
 Error Handling: This program handles user errors.  If there is an error caused by input from the command line,
 an error message will be displayed, and you may have to try running the program again in order to continue.
 
