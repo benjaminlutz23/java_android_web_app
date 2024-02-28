@@ -2,7 +2,6 @@ package edu.pdx.cs410J.benlutz;
 
 import edu.pdx.cs410J.InvokeMainTestCase;
 import edu.pdx.cs410J.ParserException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -15,16 +14,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Integration tests for the {@link Project5} main class.
+ * Integration tests for the {@link Project4} main class.
  */
-class Project5IT extends InvokeMainTestCase {
+class Project4IT extends InvokeMainTestCase {
   @Test
   public void xmlFileOptionWithoutFileNameShowsError() throws invalidDescriptionException, invalidOwnerException {
     ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     System.setErr(new PrintStream(errContent));
 
     String[] args = {"-xmlFile"};
-    Project5.main(args);
+    Project4.main(args);
 
     String expectedError = "Error: -xmlFile option requires a file name";
     assertTrue(errContent.toString().contains(expectedError));
@@ -38,7 +37,7 @@ class Project5IT extends InvokeMainTestCase {
 
     String[] args = {"-xmlFile", "invalid/?path.txt", "owner", "description", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
     try {
-      Project5.main(args);
+      Project4.main(args);
     } catch (Exception | invalidDescriptionException | invalidOwnerException e) {
       // Handle or log exceptions if necessary
     }
@@ -56,7 +55,7 @@ class Project5IT extends InvokeMainTestCase {
     file.delete(); // Ensure the file does not exist before the test
 
     String[] args = {"-xmlFile", fileName, "owner", "description",  "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
-    Project5.main(args);
+    Project4.main(args);
 
     assertTrue(file.exists());
 
@@ -70,7 +69,7 @@ class Project5IT extends InvokeMainTestCase {
     file.delete(); // Ensure the file does not exist before the test
 
     String[] args = {"-xmlFile", fileName, "owner", "description", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
-    Project5.main(args);
+    Project4.main(args);
 
     assertTrue(file.exists());
 
@@ -86,7 +85,7 @@ class Project5IT extends InvokeMainTestCase {
 
     String[] args = {"-xmlFile", fileName, "owner", "description",  "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
     try {
-      Project5.main(args);
+      Project4.main(args);
     } catch (invalidDescriptionException | invalidOwnerException e) {
       fail("Unexpected exception thrown: " + e.getMessage());
     }
@@ -129,7 +128,7 @@ class Project5IT extends InvokeMainTestCase {
             "01/01/2023", "10:00", "AM", "America/New_York",
             "01/01/2023", "9:00", "AM", "America/New_York"
     };
-    Project5.main(args);
+    Project4.main(args);
 
     // The expected error message when the begin time is after the end time
     String expectedError = "Error: The begin time must be before the end time.";
@@ -144,7 +143,7 @@ class Project5IT extends InvokeMainTestCase {
     System.setErr(new PrintStream(errContent));
 
     String[] args = {"-textFile"};
-    Project5.main(args);
+    Project4.main(args);
 
     String expectedError = "Error: -textFile option requires a file name";
     assertTrue(errContent.toString().contains(expectedError));
@@ -159,7 +158,7 @@ class Project5IT extends InvokeMainTestCase {
 
     String[] args = {"-textFile", "invalid/?path.txt", "owner", "description", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
     try {
-      Project5.main(args);
+      Project4.main(args);
     } catch (Exception | invalidDescriptionException | invalidOwnerException e) {
       // Handle or log exceptions if necessary
     }
@@ -177,7 +176,7 @@ class Project5IT extends InvokeMainTestCase {
     file.delete(); // Ensure the file does not exist before the test
 
     String[] args = {"-textFile", fileName, "owner", "description",  "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
-    Project5.main(args);
+    Project4.main(args);
 
     assertTrue(file.exists());
 
@@ -191,7 +190,7 @@ class Project5IT extends InvokeMainTestCase {
     file.delete(); // Ensure the file does not exist before the test
 
     String[] args = {"-textFile", fileName, "owner", "description", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
-    Project5.main(args);
+    Project4.main(args);
 
     assertTrue(file.exists());
 
@@ -207,7 +206,7 @@ class Project5IT extends InvokeMainTestCase {
 
     String[] args = {"-textFile", fileName, "owner", "description",  "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
     try {
-      Project5.main(args);
+      Project4.main(args);
     } catch (invalidDescriptionException | invalidOwnerException e) {
       fail("Unexpected exception thrown: " + e.getMessage());
     }
@@ -263,7 +262,7 @@ class Project5IT extends InvokeMainTestCase {
     ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     System.setErr(new PrintStream(errContent));
 
-    Project5.main(new String[]{"-textFile", "src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.txt", "MismatchedOwner", "Meeting", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"});
+    Project4.main(new String[]{"-textFile", "src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.txt", "MismatchedOwner", "Meeting", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"});
 
     String expectedError = "The owner name you provided does not match the owner name in the text file.";
     assertTrue(errContent.toString().contains(expectedError));
@@ -274,62 +273,62 @@ class Project5IT extends InvokeMainTestCase {
   @Test
   void missingEndTimePrintsErrorToStandardError() {
     String[] args = {"Owner", "Description", "12/01/2020", "12:00", "12/01/2020"};
-    MainMethodResult result = invokeMain(Project5.class, args);
+    MainMethodResult result = invokeMain(Project4.class, args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: Missing end time"));
   }
 
   @Test
   void missingEndDateAndTimePrintsErrorToStandardError() {
     String[] args = {"Owner", "Description", "01/01/2020", "12:00", "PM", "America/Los_Angeles"};
-    MainMethodResult result = invokeMain(Project5.class, args);
+    MainMethodResult result = invokeMain(Project4.class, args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: Missing end time"));
   }
 
   @Test
   void invalidBeginDateFormatPrintsErrorToStandardError() {
     String[] args = {"Owner", "Description", "12-01-2020", "12:00", "12/01/2020", "13:00"};
-    MainMethodResult result = invokeMain(Project5.class, args);
+    MainMethodResult result = invokeMain(Project4.class, args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid begin date/time format:"));
   }
 
   @Test
   void invalidBeginTimeFormatPrintsErrorToStandardError() {
     String[] args = {"Owner", "Description", "12/01/2020", "12:XX", "12/01/2020", "13:00"};
-    MainMethodResult result = invokeMain(Project5.class, args);
+    MainMethodResult result = invokeMain(Project4.class, args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid begin date/time format:"));
   }
 
   @Test
   void invalidEndDateTimeFormatPrintsErrorToStandardError() {
     String[] args = {"Owner", "Description", "01/01/2020", "12:00", "PM", "America/Los_Angeles"};
-    MainMethodResult result = invokeMain(Project5.class, args);
+    MainMethodResult result = invokeMain(Project4.class, args);
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid end date/time format:"));
   }
 
   @Test
   void invokingMainWithNoArgumentsPrintsMissingArgumentsToStandardError() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project5.class);
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project4.class);
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: No command line arguments"));
   }
 
   //When there are less than 6 arguments not including options
   @Test
   void unknownCommandLineOptionPrintsErrorToStandardError() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project5.class, "-print", "-unknownOption", "owner", "description",
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project4.class, "-print", "-unknownOption", "owner", "description",
             "begin date", "begin time", "end date", "end time");
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: Invalid command line option"));
   }
 
   @Test
   void specifyingBothXmlFileAndTextFileOptionsPrintsError() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project5.class, "-xmlFile", "xmlFileName.xml", "-textFile", "textFileName.txt", "Owner Name", "Description", "01/01/2024 10:00 AM", "America/Los_Angeles", "01/01/2024 11:00 AM", "America/Los_Angeles");
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project4.class, "-xmlFile", "xmlFileName.xml", "-textFile", "textFileName.txt", "Owner Name", "Description", "01/01/2024 10:00 AM", "America/Los_Angeles", "01/01/2024 11:00 AM", "America/Los_Angeles");
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: It is invalid to specify both the -xmlFile and -textFile options"));
   }
 
 
   @Test
   void tooManyCommandLineArgumentsPrintsErrorToStandardError() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project5.class, "Arg1", "Arg2", "Arg3", "Arg4", "Arg5",
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project4.class, "Arg1", "Arg2", "Arg3", "Arg4", "Arg5",
             "Arg6", "Arg7", "Arg8", "Arg9", "Arg10", "Arg11", "Arg12", "Arg13", "Arg14", "Arg15", "Arg16", "Arg17");
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
   }
