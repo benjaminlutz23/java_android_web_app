@@ -18,6 +18,118 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class Project4IT extends InvokeMainTestCase {
   @Test
+  public void xmlFileOptionWithoutFileNameShowsError() throws invalidDescriptionException, invalidOwnerException {
+    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(errContent));
+
+    String[] args = {"-xmlFile"};
+    Project4.main(args);
+
+    String expectedError = "Error: -xmlFile option requires a file name";
+    assertTrue(errContent.toString().contains(expectedError));
+
+    System.setErr(System.err); // Reset System.err to its original stream
+  }
+  @Test
+  public void invalidXmlFilePathFormatShowsError() {
+    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(errContent));
+
+    String[] args = {"-xmlFile", "invalid/?path.txt", "owner", "description", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
+    try {
+      Project4.main(args);
+    } catch (Exception | invalidDescriptionException | invalidOwnerException e) {
+      // Handle or log exceptions if necessary
+    }
+
+    String expectedError = "Error while creating new file"; // or any other specific error message you log for invalid paths
+    assertTrue(errContent.toString().contains(expectedError));
+
+    System.setErr(System.err); // Reset System.err to its original stream
+  }
+
+  @Test
+  public void absoluteXmlFilePathWorksCorrectly() throws invalidDescriptionException, invalidOwnerException {
+    String fileName = Paths.get(System.getProperty("java.io.tmpdir"), "tempAppointmentBookAbsolute.xml").toString();
+    File file = new File(fileName);
+    file.delete(); // Ensure the file does not exist before the test
+
+    String[] args = {"-xmlFile", fileName, "owner", "description",  "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
+    Project4.main(args);
+
+    assertTrue(file.exists());
+
+    file.delete(); // Cleanup after test
+  }
+
+  @Test
+  public void relativeXmlFilePathWorksCorrectly() throws invalidDescriptionException, invalidOwnerException {
+    String fileName = "tempAppointmentBookRelative.xml";
+    File file = new File(fileName);
+    file.delete(); // Ensure the file does not exist before the test
+
+    String[] args = {"-xmlFile", fileName, "owner", "description", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
+    Project4.main(args);
+
+    assertTrue(file.exists());
+
+    file.delete(); // Cleanup after test
+  }
+
+
+  @Test
+  public void nonExistentXmlFileCreatesNewFile() {
+    String fileName = "tempAppointmentBook.xml";
+    File file = new File(fileName);
+    file.delete(); // Ensure the file does not exist before the test
+
+    String[] args = {"-xmlFile", fileName, "owner", "description",  "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"};
+    try {
+      Project4.main(args);
+    } catch (invalidDescriptionException | invalidOwnerException e) {
+      fail("Unexpected exception thrown: " + e.getMessage());
+    }
+
+    assertTrue(file.exists());
+
+    file.delete(); // Cleanup after test
+  }
+
+
+  @Test
+  void dumpingAppointmentBookToXmlWritesCorrectContent() throws invalidOwnerException, invalidDescriptionException, IOException {
+    String owner = "Test Owner";
+    ZonedDateTime beginTime = ZonedDateTime.now().withZoneSameInstant(ZoneId.systemDefault());
+    ZonedDateTime endTime = beginTime.plusHours(1);
+    String description = "Test Appointment";
+
+    AppointmentBook book = new AppointmentBook(owner);
+    Appointment appointment = new Appointment(description, beginTime, endTime);
+    book.addAppointment(appointment);
+
+    StringWriter sw = new StringWriter();
+    XmlDumper dumper = new XmlDumper(sw);
+    dumper.dump(book);
+
+    String dumpedContent = sw.toString();
+    assertTrue(dumpedContent.contains(owner));
+    assertTrue(dumpedContent.contains(description));
+  }
+
+  @Test
+  public void mismatchedOwnerNameInXmlPrintsErrorMessage() throws invalidDescriptionException, invalidOwnerException {
+    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(errContent));
+
+    Project4.main(new String[]{"-xmlFile", "src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.xml", "MismatchedOwner", "Meeting", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"});
+
+    String expectedError = "The owner name in the XML file does not match the provided owner name.";
+    assertTrue(errContent.toString().contains(expectedError));
+
+    System.setErr(System.err); // Reset System.err to its original stream
+  }
+
+  @Test
   public void beginTimeAfterEndTimeShowsError() throws invalidDescriptionException, invalidOwnerException {
     ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     System.setErr(new PrintStream(errContent));
