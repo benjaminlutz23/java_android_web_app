@@ -166,6 +166,11 @@ public class Project4 {
             return;
         }
 
+        if (xmlFileFlag && fileFlag) {
+            System.err.println("Error: It is invalid to specify both the -xmlFile and -textFile options");
+            return;
+        }
+
         // Check for missing end time
         if (endDate == null || endTime == null) {
             System.err.println("Error: Missing end time");
@@ -369,8 +374,9 @@ public class Project4 {
                 "    -print             - Prints a description of the new appointment\n" +
                 "    -README            - Prints a README for this project and exits\n" +
                 "    -textFile file     - Where to read/write the appointment book info\n" +
+                "    -xmlFile file      - Where to read/write the appointment book info\n" +
                 "    -pretty file       - Pretty print the appointment book to standard out or " +
-                "                     a text file (by specifying a 'file')\n" +
+                "                         a text file (by specifying a 'file')\n" +
                 "Note: Date and time should be in 12-hour format, and should specify a valid zone ID.\n" +
                 "      For multi-word descriptions or owner names, enclose them in quotes.");
     }

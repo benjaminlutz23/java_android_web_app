@@ -332,6 +332,13 @@ class Project4IT extends InvokeMainTestCase {
   }
 
   @Test
+  void specifyingBothXmlFileAndTextFileOptionsPrintsError() {
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project4.class, "-xmlFile", "xmlFileName.xml", "-textFile", "textFileName.txt", "Owner Name", "Description", "01/01/2024 10:00 AM", "America/Los_Angeles", "01/01/2024 11:00 AM", "America/Los_Angeles");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: It is invalid to specify both the -xmlFile and -textFile options"));
+  }
+
+
+  @Test
   void tooManyCommandLineArgumentsPrintsErrorToStandardError() {
     InvokeMainTestCase.MainMethodResult result = invokeMain(Project4.class, "Arg1", "Arg2", "Arg3", "Arg4", "Arg5",
             "Arg6", "Arg7", "Arg8", "Arg9", "Arg10", "Arg11", "Arg12", "Arg13", "Arg14", "Arg15", "Arg16", "Arg17");

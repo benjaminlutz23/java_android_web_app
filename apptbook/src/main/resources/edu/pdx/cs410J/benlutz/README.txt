@@ -26,6 +26,8 @@ Options: These may appear in any order:
     -textFile file: Specifies a file path to read/write the appointment book information.
     -pretty file: Pretty prints the appointment book to a specified file, or standard out if the file argument is -.
         This includes the duration of each appointment in minutes.
+    -xmlFile file: Specifies a file path to read/write the appointment book information as XML.
+
 
 Here are some examples of how the program might be used:
 
@@ -40,6 +42,9 @@ Here are some examples of how the program might be used:
     java -jar target/apptbook-1.0.0.jar -pretty "Benjamin Lutz" "Strategy Meeting" 02/01/2023 1:30 PM America/New_York 02/01/2023 2:30 PM America/New_York
 
     java -jar target/apptbook-1.0.0.jar -textFile myFile "Benjamin Lutz" "Strategy Meeting" 02/01/2023 1:30 PM America/New_York 02/01/2023 2:30 PM America/New_York
+
+    java -jar target/apptbook-1.0.0.jar -xmlFile myFile.xml "Benjamin Lutz" "Strategy Meeting" 02/01/2023 1:30 PM America/New_York 02/01/2023 2:30 PM America/New_York
+
 
 Error Handling: This program handles user errors.  If there is an error caused by input from the command line,
 an error message will be displayed, and you may have to try running the program again in order to continue.
