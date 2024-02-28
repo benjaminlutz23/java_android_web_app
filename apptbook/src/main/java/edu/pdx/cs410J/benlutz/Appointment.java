@@ -105,6 +105,12 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
             this.getBeginTime() + " until " + this.getEndTime();
   }
 
+  /**
+   * Compares this appointment to another based on start time, end time, and description.
+   *
+   * @param other the other appointment to compare to
+   * @return comparison result as per {@link Comparable#compareTo}
+   */
   @Override
   public int compareTo(Appointment other) {
     int beginTimeComparison = this.beginTime.compareTo(other.beginTime);

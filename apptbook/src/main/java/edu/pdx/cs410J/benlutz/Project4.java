@@ -316,6 +316,15 @@ public class Project4 {
         }
     }
 
+    /**
+     * Gets or creates an AppointmentBook for a given XML file and owner.
+     *
+     * @param xmlFileName Name of the XML file.
+     * @param owner Owner of the AppointmentBook.
+     * @param xmlFile File object for the XML.
+     * @return An AppointmentBook or null if an error occurs.
+     * @throws invalidOwnerException If owner name is invalid.
+     */
     private static AppointmentBook getAppointmentBook(String xmlFileName, String owner, File xmlFile) throws invalidOwnerException {
         AppointmentBook appointmentBook;
         try {

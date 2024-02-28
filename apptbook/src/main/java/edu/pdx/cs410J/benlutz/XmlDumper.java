@@ -15,13 +15,30 @@ import java.io.Writer;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * The {@code XmlDumper} class implements the {@code AppointmentBookDumper} interface,
+ * enabling {@code AppointmentBook} instances to be written in XML format. This
+ * class generates XML documents that adhere to a specific DTD and writes them to a provided
+ * {@code Writer}, such as a file writer.
+ */
 public class XmlDumper implements AppointmentBookDumper<AppointmentBook> {
     private final Writer writer;
 
+    /**
+     * Constructs a new {@code XmlDumper} instance that will write to the given writer.
+     *
+     * @param writer The {@code Writer} where the XML document is to be written.
+     */
     public XmlDumper(Writer writer) {
         this.writer = writer;
     }
 
+    /**
+     * Serializes an {@code AppointmentBook} into XML and writes it to the specified {@code Writer}.
+     *
+     * @param book The {@code AppointmentBook} to be serialized into XML.
+     * @throws IOException If an I/O error occurs during the writing process.
+     */
     @Override
     public void dump(AppointmentBook book) throws IOException {
         try {
@@ -66,6 +83,16 @@ public class XmlDumper implements AppointmentBookDumper<AppointmentBook> {
         }
     }
 
+    /**
+     * Creates and returns an XML {@code Element} representing a date and time, including timezone,
+     * for either the start or end of an appointment. This method structures the date and time
+     * according to the requirements of the DTD.
+     *
+     * @param doc       The XML {@code Document} to which the element will belong.
+     * @param tag       The tag name for the element, typically "begin" or "end".
+     * @param dateTime  The {@code ZonedDateTime} representing the date and time to be formatted.
+     * @return An XML {@code Element} representing the specified date and time.
+     */
     private Element createDateTimeElement(Document doc, String tag, ZonedDateTime dateTime) {
         Element dateTimeElement = doc.createElement(tag);
 

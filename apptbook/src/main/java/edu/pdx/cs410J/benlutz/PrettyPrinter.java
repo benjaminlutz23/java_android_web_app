@@ -9,6 +9,14 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
+/**
+ * The {@code PrettyPrinter} class implements the {@code AppointmentBookDumper} interface,
+ * and it's purpose is to pretty-print the details of an {@code AppointmentBook} to a specified writer.
+ * This includes printing a readable summary of each appointment within the book, alongside
+ * the owner's name. Each appointment's duration in minutes is calculated and displayed,
+ * enhancing readability and usefulness of the output.
+ */
+
 public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook> {
     private final Writer writer;
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");

@@ -14,13 +14,31 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * The {@code XmlParser} class implements the {@code AppointmentBookParser} interface,
+ * enabling the parsing of XML documents into {@code AppointmentBook} instances. This parser
+ * expects XML documents to conform to a specific DTD and extracts appointment book data,
+ * including owner information and appointments, to create an {@code AppointmentBook} object.
+ */
 public class XmlParser implements AppointmentBookParser<AppointmentBook> {
     private final InputStream xml;
 
+    /**
+     * Constructs a new {@code XmlParser} instance for parsing XML data from the given input stream.
+     *
+     * @param xml The input stream containing XML data of an appointment book.
+     */
     public XmlParser(InputStream xml) {
         this.xml = xml;
     }
 
+    /**
+     * Parses the XML data from the input stream and constructs an {@code AppointmentBook} object
+     * with the parsed data.
+     *
+     * @return An {@code AppointmentBook} instance populated with data from the XML input stream.
+     * @throws ParserException If parsing fails due to I/O errors, invalid XML format, or other issues.
+     */
     @Override
     public AppointmentBook parse() throws ParserException {
         try {
@@ -54,6 +72,13 @@ public class XmlParser implements AppointmentBookParser<AppointmentBook> {
         }
     }
 
+    /**
+     * Parses date and time information from an XML element and constructs a {@code ZonedDateTime} object.
+     *
+     * @param parentElement The XML element containing the date and time information.
+     * @param tagName The tag name within the parent element that contains the date and time (e.g., "begin" or "end").
+     * @return A {@code ZonedDateTime} object representing the parsed date and time.
+     */
     private ZonedDateTime parseDateTime(Element parentElement, String tagName) {
         Element dateTimeElement = (Element) parentElement.getElementsByTagName(tagName).item(0);
         Element dateElement = (Element) dateTimeElement.getElementsByTagName("date").item(0);
