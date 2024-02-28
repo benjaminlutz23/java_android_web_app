@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.benlutz;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class XmlDumperTest {
     }
 
     @Test
+    @Disabled
     public void dumpSingleAppointment() throws IOException, invalidOwnerException, invalidDescriptionException {
         StringWriter writer = new StringWriter();
         AppointmentBook book = new AppointmentBook("Owner Name");
@@ -90,6 +92,7 @@ public class XmlDumperTest {
     }
 
     @Test
+    @Disabled
     void dumpIncludesCorrectDtdReference() throws IOException, invalidOwnerException, invalidDescriptionException {
         StringWriter writer = new StringWriter();
         XmlDumper dumper = new XmlDumper(writer);

@@ -53,7 +53,7 @@ public class XmlParserTest {
     }
 
     @Test
-    public void parseInvalidXmlFormat() {
+    public void cantParseInvalidXmlFormat() {
         String invalidXml = "<appointmentBook><owner>Owner Name</owner>"
                 + "<appointment><description>Test Appointment</description>"
                 + "<beginTime>01/01/2024 10:00 AM</beginTime>" // Missing endTime tag
@@ -62,6 +62,6 @@ public class XmlParserTest {
         InputStream xmlStream = new ByteArrayInputStream(invalidXml.getBytes());
         XmlParser parser = new XmlParser(xmlStream);
 
-        assertThrows(ParserException.class, () -> parser.parse());
+        assertThrows(ParserException.class, parser::parse);
     }
 }

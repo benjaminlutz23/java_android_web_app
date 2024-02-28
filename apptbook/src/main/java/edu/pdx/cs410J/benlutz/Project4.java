@@ -39,17 +39,19 @@ public class Project4 {
             return;
         }
 
-        if (args.length > 14) {
+        if (args.length > 16) {
             System.err.println("Too many command line arguments");
             return;
         }
 
         boolean printFlag = false;
         boolean fileFlag = false;
+        boolean xmlFileFlag = false;
         boolean prettyFlag = false;
         boolean prettyStdOutFlag = false;
         boolean invalidOptionFlag = false;
         String fileName = null;
+        String xmlFileName = null;
         String prettyFileName = null;
         String owner = null;
         String description = null;
@@ -85,6 +87,18 @@ public class Project4 {
                         } else {
                             // Handle the case where "-textFile" is the last argument without a following file name
                             System.err.println("Error: -textFile option requires a file name");
+                            return;
+                        }
+                        break;
+                    case "-xmlFile":
+                        xmlFileFlag = true;
+                        // Ensure there is another argument after "-xmlFile"
+                        if (i + 1 < args.length) {
+                            xmlFileName = args[i + 1];
+                            i++; // Skip the next argument since it's used as the fileName
+                        } else {
+                            // Handle the case where "-xmlFile" is the last argument without a following file name
+                            System.err.println("Error: -xmlFile option requires a file name");
                             return;
                         }
                         break;
@@ -196,18 +210,8 @@ public class Project4 {
 
                 // Check if the file exists
                 if (!file.exists()) {
-                    try {
-                        // If the file doesn't exist, create a new AppointmentBook and file
-                        boolean newFileCreated = file.createNewFile();
-                        if (!newFileCreated) {
-                            System.err.println("Could not create new file: " + fileName);
-                            return;
-                        }
-                        appointmentBook = new AppointmentBook(owner);
-                    } catch (IOException e) {
-                        System.err.println("Error while creating new file: " + e.getMessage());
-                        return;
-                    }
+                    appointmentBook = getAppointmentBook(fileName, owner, file);
+                    if (appointmentBook == null) return;
                 } else {
                     // If the file exists, parse the existing AppointmentBook
                     try (FileReader reader = new FileReader(file)) {
@@ -232,6 +236,38 @@ public class Project4 {
                     dumper.dump(appointmentBook);
                 } catch (IOException e) {
                     System.err.println("Error writing to file: " + e.getMessage());
+                }
+            } else if (xmlFileFlag) {
+                // XML File Handling
+                File xmlFile = new File(xmlFileName);
+
+                // Check if the XML file exists
+                if (!xmlFile.exists()) {
+                    appointmentBook = getAppointmentBook(xmlFileName, owner, xmlFile);
+                    if (appointmentBook == null) return;
+                } else {
+                    // If the XML file exists, parse the existing AppointmentBook
+                    try (FileInputStream xmlInputStream = new FileInputStream(xmlFile)) {
+                        XmlParser parser = new XmlParser(xmlInputStream);
+                        appointmentBook = parser.parse();
+                        if (!appointmentBook.getOwnerName().equals(owner)) {
+                            System.err.println("The owner name in the XML file does not match the provided owner name.");
+                            return;
+                        }
+                    } catch (IOException | ParserException e) {
+                        System.err.println("Error reading from XML file: " + e.getMessage());
+                        return;
+                    }
+                }
+                // Add the new appointment
+                appointmentBook.addAppointment(appointment);
+
+                // Dump the updated AppointmentBook back to the XML file
+                try (FileWriter writer = new FileWriter(xmlFile)) {
+                    XmlDumper dumper = new XmlDumper(writer);
+                    dumper.dump(appointmentBook);
+                } catch (IOException e) {
+                    System.err.println("Error writing to XML file: " + e.getMessage());
                 }
             } else {
                 appointmentBook = new AppointmentBook(owner);
@@ -273,6 +309,23 @@ public class Project4 {
             System.err.println("Invalid Owner Name");
             return;
         }
+    }
+
+    private static AppointmentBook getAppointmentBook(String xmlFileName, String owner, File xmlFile) throws invalidOwnerException {
+        AppointmentBook appointmentBook;
+        try {
+            // If the XML file doesn't exist, create a new AppointmentBook and the XML file
+            boolean newFileCreated = xmlFile.createNewFile();
+            if (!newFileCreated) {
+                System.err.println("Could not create new file: " + xmlFileName);
+                return null;
+            }
+            appointmentBook = new AppointmentBook(owner);
+        } catch (IOException e) {
+            System.err.println("Error while creating new file: " + e.getMessage());
+            return null;
+        }
+        return appointmentBook;
     }
 
     /**

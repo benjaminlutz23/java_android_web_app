@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="us-ascii" standalone="no"?>
+<!DOCTYPE apptbook SYSTEM "http://www.cs.pdx.edu/~whitlock/dtds/apptbook.dtd">
+<apptbook>
+    <owner>Benjamin Lutz</owner>
+    <appt>
+        <begin>
+            <date day="1" month="2" year="2023"/>
+            <time hour="13" minute="0" time-zone="America/New_York"/>
+        </begin>
+        <end>
+            <date day="1" month="2" year="2023"/>
+            <time hour="14" minute="30" time-zone="America/New_York"/>
+        </end>
+        <description>Another Meeting</description>
+    </appt>
+</apptbook>

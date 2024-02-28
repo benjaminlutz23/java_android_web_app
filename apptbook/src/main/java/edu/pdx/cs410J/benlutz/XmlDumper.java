@@ -12,6 +12,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.Writer;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class XmlDumper implements AppointmentBookDumper<AppointmentBook> {
     private final Writer writer;
@@ -27,46 +29,35 @@ public class XmlDumper implements AppointmentBookDumper<AppointmentBook> {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.newDocument();
 
-            // Create the root element and set DTD references using AppointmentBookXmlHelper
-            Element rootElement = doc.createElement("appointmentBook");
+            Element rootElement = doc.createElement("apptbook");
             doc.appendChild(rootElement);
-            doc.setXmlStandalone(true); // Optional: Indicates that the document is standalone
 
-            // Add owner element
             Element ownerElement = doc.createElement("owner");
             ownerElement.appendChild(doc.createTextNode(book.getOwnerName()));
             rootElement.appendChild(ownerElement);
 
-            // Iterate over appointments and add them to the document
             for (Appointment appointment : book.getAppointments()) {
-                Element appointmentElement = doc.createElement("appointment");
-                rootElement.appendChild(appointmentElement);
+                Element apptElement = doc.createElement("appt");
+                rootElement.appendChild(apptElement);
 
-                // Description
+                Element beginElement = createDateTimeElement(doc, "begin", appointment.getBeginTime());
+                apptElement.appendChild(beginElement);
+
+                Element endElement = createDateTimeElement(doc, "end", appointment.getEndTime());
+                apptElement.appendChild(endElement);
+
                 Element descElement = doc.createElement("description");
                 descElement.appendChild(doc.createTextNode(appointment.getDescription()));
-                appointmentElement.appendChild(descElement);
-
-                // BeginTime
-                Element beginElement = doc.createElement("beginTime");
-                beginElement.appendChild(doc.createTextNode(appointment.getBeginTimeString()));
-                appointmentElement.appendChild(beginElement);
-
-                // EndTime
-                Element endElement = doc.createElement("endTime");
-                endElement.appendChild(doc.createTextNode(appointment.getEndTimeString()));
-                appointmentElement.appendChild(endElement);
-
-                // Other elements can be added here as per the DTD
+                apptElement.appendChild(descElement);
             }
 
-            // Use a Transformer to convert DOM to XML
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, AppointmentBookXmlHelper.SYSTEM_ID);
+            transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "http://www.cs.pdx.edu/~whitlock/dtds/apptbook.dtd");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            DOMSource source = new DOMSource(doc);
+            transformer.setOutputProperty(OutputKeys.ENCODING, "us-ascii");
 
+            DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(writer);
             transformer.transform(source, result);
 
@@ -74,4 +65,23 @@ public class XmlDumper implements AppointmentBookDumper<AppointmentBook> {
             throw new IOException("Exception while dumping Appointment Book to XML", e);
         }
     }
+
+    private Element createDateTimeElement(Document doc, String tag, ZonedDateTime dateTime) {
+        Element dateTimeElement = doc.createElement(tag);
+
+        Element dateElement = doc.createElement("date");
+        dateElement.setAttribute("day", String.valueOf(dateTime.getDayOfMonth()));
+        dateElement.setAttribute("month", String.valueOf(dateTime.getMonthValue()));
+        dateElement.setAttribute("year", String.valueOf(dateTime.getYear()));
+        dateTimeElement.appendChild(dateElement);
+
+        Element timeElement = doc.createElement("time");
+        timeElement.setAttribute("hour", String.valueOf(dateTime.getHour()));
+        timeElement.setAttribute("minute", String.valueOf(dateTime.getMinute()));
+        timeElement.setAttribute("time-zone", dateTime.getZone().toString());
+        dateTimeElement.appendChild(timeElement);
+
+        return dateTimeElement;
+    }
 }
+
