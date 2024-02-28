@@ -30,7 +30,6 @@ public class XmlDumperTest {
     }
 
     @Test
-    @Disabled
     public void dumpSingleAppointment() throws IOException, invalidOwnerException, invalidDescriptionException {
         StringWriter writer = new StringWriter();
         AppointmentBook book = new AppointmentBook("Owner Name");
@@ -44,10 +43,10 @@ public class XmlDumperTest {
         dumper.dump(book);
         String xmlOutput = writer.toString();
 
-        // Verify that the XML includes the appointment details
-        assertThat(xmlOutput, containsString("<description>Test Appointment</description>"));
-        assertThat(xmlOutput, containsString("<beginTime>" + appointment.getBeginTimeString() + "</beginTime>"));
-        assertThat(xmlOutput, containsString("<endTime>" + appointment.getEndTimeString() + "</endTime>"));
+        // Adjusted assertions to match the new XML structure
+        assertTrue(xmlOutput.contains("<description>Test Appointment</description>"));
+        assertTrue(xmlOutput.contains("<date day=\"" + beginTime.getDayOfMonth() + "\""));
+        assertTrue(xmlOutput.contains("<time hour=\"" + beginTime.getHour() + "\""));
     }
 
     @Test
@@ -92,22 +91,20 @@ public class XmlDumperTest {
     }
 
     @Test
-    @Disabled
     void dumpIncludesCorrectDtdReference() throws IOException, invalidOwnerException, invalidDescriptionException {
         StringWriter writer = new StringWriter();
         XmlDumper dumper = new XmlDumper(writer);
 
         AppointmentBook book = new AppointmentBook("Owner");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a").withZone(ZoneId.systemDefault());
 
-        ZonedDateTime beginTime = ZonedDateTime.parse("01/04/2024 10:00 AM", formatter);
-        ZonedDateTime endTime = ZonedDateTime.parse("01/04/2024 11:00 AM", formatter);
+        ZonedDateTime beginTime = ZonedDateTime.parse("2024-01-04T10:00:00-05:00[America/New_York]");
+        ZonedDateTime endTime = ZonedDateTime.parse("2024-01-04T11:00:00-05:00[America/New_York]");
         book.addAppointment(new Appointment("General Meeting", beginTime, endTime));
 
         dumper.dump(book);
 
         String xmlOutput = writer.toString();
-        assertTrue(xmlOutput.contains("<!DOCTYPE appointmentBook SYSTEM \"http://www.cs.pdx.edu/~whitlock/dtds/apptbook.dtd\">"), "XML output should include the correct DTD reference");
+        assertTrue(xmlOutput.contains("<!DOCTYPE apptbook SYSTEM \"http://www.cs.pdx.edu/~whitlock/dtds/apptbook.dtd\">"), "XML output should include the correct DTD reference");
     }
 
 }

@@ -21,11 +21,21 @@ public class XmlParserTest {
     }
 
     @Test
-    public void testParseSingleAppointment() throws ParserException {
-        String xml = "<appointmentBook><owner>Owner Name</owner>"
-                + "<appointment><description>Test Appointment</description>"
-                + "<beginTime>01/01/2024 10:00 AM</beginTime>"
-                + "<endTime>01/01/2024 11:00 AM</endTime></appointment></appointmentBook>";
+    public void testParseSingleAppointment() throws ParserException, invalidOwnerException, invalidDescriptionException {
+        String xml = "<apptbook>" +
+                "<owner>Owner Name</owner>" +
+                "<appt>" +
+                "<description>Test Appointment</description>" +
+                "<begin>" +
+                "<date day=\"1\" month=\"1\" year=\"2024\"/>" +
+                "<time hour=\"10\" minute=\"0\" time-zone=\"America/New_York\"/>" +
+                "</begin>" +
+                "<end>" +
+                "<date day=\"1\" month=\"1\" year=\"2024\"/>" +
+                "<time hour=\"11\" minute=\"0\" time-zone=\"America/New_York\"/>" +
+                "</end>" +
+                "</appt>" +
+                "</apptbook>";
         ByteArrayInputStream xmlStream = new ByteArrayInputStream(xml.getBytes());
         XmlParser parser = new XmlParser(xmlStream);
 
@@ -37,14 +47,32 @@ public class XmlParserTest {
     }
 
     @Test
-    public void testParseMultipleAppointments() throws ParserException {
-        String xml = "<appointmentBook><owner>Owner Name</owner>"
-                + "<appointment><description>First Appointment</description>"
-                + "<beginTime>01/01/2024 10:00 AM</beginTime>"
-                + "<endTime>01/01/2024 11:00 AM</endTime></appointment>"
-                + "<appointment><description>Second Appointment</description>"
-                + "<beginTime>01/02/2024 10:00 AM</beginTime>"
-                + "<endTime>01/02/2024 11:00 AM</endTime></appointment></appointmentBook>";
+    public void testParseMultipleAppointments() throws ParserException, invalidOwnerException, invalidDescriptionException {
+        String xml = "<apptbook>" +
+                "<owner>Owner Name</owner>" +
+                "<appt>" +
+                "<description>First Appointment</description>" +
+                "<begin>" +
+                "<date day=\"1\" month=\"1\" year=\"2024\"/>" +
+                "<time hour=\"10\" minute=\"0\" time-zone=\"America/New_York\"/>" +
+                "</begin>" +
+                "<end>" +
+                "<date day=\"1\" month=\"1\" year=\"2024\"/>" +
+                "<time hour=\"11\" minute=\"0\" time-zone=\"America/New_York\"/>" +
+                "</end>" +
+                "</appt>" +
+                "<appt>" +
+                "<description>Second Appointment</description>" +
+                "<begin>" +
+                "<date day=\"2\" month=\"1\" year=\"2024\"/>" +
+                "<time hour=\"10\" minute=\"0\" time-zone=\"America/New_York\"/>" +
+                "</begin>" +
+                "<end>" +
+                "<date day=\"2\" month=\"1\" year=\"2024\"/>" +
+                "<time hour=\"11\" minute=\"0\" time-zone=\"America/New_York\"/>" +
+                "</end>" +
+                "</appt>" +
+                "</apptbook>";
         ByteArrayInputStream xmlStream = new ByteArrayInputStream(xml.getBytes());
         XmlParser parser = new XmlParser(xmlStream);
 
@@ -54,14 +82,21 @@ public class XmlParserTest {
 
     @Test
     public void cantParseInvalidXmlFormat() {
-        String invalidXml = "<appointmentBook><owner>Owner Name</owner>"
-                + "<appointment><description>Test Appointment</description>"
-                + "<beginTime>01/01/2024 10:00 AM</beginTime>" // Missing endTime tag
-                + "</appointment></appointmentBook>";
+        String invalidXml = "<apptbook>" +
+                "<owner>Owner Name</owner>" +
+                "<appt>" +
+                "<description>Test Appointment</description>" +
+                "<begin>" +
+                "<date day=\"1\" month=\"1\" year=\"2024\"/>" +
+                "<time hour=\"10\" minute=\"0\" time-zone=\"America/New_York\"/>" +
+                "</begin>" + // Missing endTime tag
+                "</appt>" +
+                "</apptbook>";
 
         InputStream xmlStream = new ByteArrayInputStream(invalidXml.getBytes());
         XmlParser parser = new XmlParser(xmlStream);
 
         assertThrows(ParserException.class, parser::parse);
     }
+
 }
