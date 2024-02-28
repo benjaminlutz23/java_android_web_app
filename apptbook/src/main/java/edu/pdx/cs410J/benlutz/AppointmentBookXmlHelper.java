@@ -13,13 +13,13 @@ public class AppointmentBookXmlHelper extends ProjectXmlHelper {
    * The System ID for the Family Tree DTD
    */
   protected static final String SYSTEM_ID =
-    "http://www.cs.pdx.edu/~whitlock/dtds/apptbook.dtd";
+          "http://www.cs.pdx.edu/~whitlock/dtds/apptbook.dtd";
 
   /**
    * The Public ID for the Family Tree DTD
    */
   protected static final String PUBLIC_ID =
-    "-//Portland State University//DTD CS410J Appointment Book//EN";
+          "-//Portland State University//DTD CS410J Appointment Book//EN";
 
   /**
    * Constructs an instance of AppointmentBookXmlHelper

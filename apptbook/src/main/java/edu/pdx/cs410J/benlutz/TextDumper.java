@@ -33,7 +33,7 @@ public class TextDumper implements AppointmentBookDumper<AppointmentBook> {
   @Override
   public void dump(AppointmentBook book) {
     try (
-      PrintWriter pw = new PrintWriter(this.writer)
+            PrintWriter pw = new PrintWriter(this.writer)
     ) {
       pw.println(book.getOwnerName());
 
