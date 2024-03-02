@@ -118,6 +118,19 @@ class Project4IT extends InvokeMainTestCase {
     assertTrue(dumpedContent.contains(description));
   }
 
+  @Test
+  @Disabled
+  public void mismatchedOwnerNameInXmlPrintsErrorMessage() throws invalidDescriptionException, invalidOwnerException {
+    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(errContent));
+
+    Project4.main(new String[]{"-xmlFile", "src/test/resources/edu/pdx/cs410J/benlutz/valid-apptbook.xml", "MismatchedOwner", "Meeting", "01/01/2020", "12:00", "PM", "America/Los_Angeles", "01/01/2020", "1:00", "PM", "America/Los_Angeles"});
+
+    String expectedError = "The owner name in the XML file does not match the provided owner name.";
+    assertTrue(errContent.toString().contains(expectedError));
+
+    System.setErr(System.err);
+  }
 
   @Test
   public void beginTimeAfterEndTimeShowsError() throws invalidDescriptionException, invalidOwnerException {
