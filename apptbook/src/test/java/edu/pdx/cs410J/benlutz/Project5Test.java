@@ -18,12 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * from <code>Project1IT</code> which is an integration test (and can capture data
  * written to {@link System#out} and the like.
  */
-class Project4Test extends InvokeMainTestCase{
+class Project5Test extends InvokeMainTestCase{
 
   @Test
   void readmeCanBeReadAsResource() throws IOException {
     try (
-      InputStream readme = Project4.class.getResourceAsStream("README.txt")
+      InputStream readme = Project5.class.getResourceAsStream("README.txt")
     ) {
       assertThat(readme, not(nullValue()));
       BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
@@ -34,7 +34,7 @@ class Project4Test extends InvokeMainTestCase{
 
   @Test
   void readmeFlagPrintsReadmeToStandardOut() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project4.class, "-README");
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project5.class, "-README");
     assertThat(result.getTextWrittenToStandardOut(), containsString("CS 510J Project 1: Appointment Book Application"));
   }
 
@@ -43,13 +43,13 @@ class Project4Test extends InvokeMainTestCase{
   @Test
   void printFlagPrintsAppointmentDetails() {
     String[] args = {"-print", "owner", "description", "01/01/2024", "12:00", "01/01/2024", "13:00"};
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project4.class, args);
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project5.class, args);
     assertThat(result.getTextWrittenToStandardOut(), containsString("description"));
   }
 
   @Test
   void invalidOptionPrintsErrorToStandardError() {
-    InvokeMainTestCase.MainMethodResult result = invokeMain(Project4.class, "-invalidOption");
+    InvokeMainTestCase.MainMethodResult result = invokeMain(Project5.class, "-invalidOption");
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: Invalid command line option"));
   }
 }
