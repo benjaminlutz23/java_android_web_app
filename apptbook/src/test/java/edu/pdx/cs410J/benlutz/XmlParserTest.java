@@ -96,7 +96,7 @@ public class XmlParserTest {
         InputStream xmlStream = new ByteArrayInputStream(invalidXml.getBytes());
         XmlParser parser = new XmlParser(xmlStream);
 
-        assertThrows(RuntimeException.class, parser::parse);
+        assertThrows(ParserException.class, parser::parse);
     }
 
 }

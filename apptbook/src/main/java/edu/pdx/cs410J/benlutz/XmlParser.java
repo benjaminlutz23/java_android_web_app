@@ -69,8 +69,8 @@ public class XmlParser implements AppointmentBookParser<AppointmentBook> {
                 }
             }
             return book;
-        } catch (ParserConfigurationException e) {
-            throw new ParserException("Parser configuration error", e);
+        } catch (RuntimeException | ParserConfigurationException e) {
+            throw new ParserException("Invalid XML format", e);
         } catch (SAXException e) {
             throw new ParserException("Error parsing XML document", e);
         } catch (IOException e) {

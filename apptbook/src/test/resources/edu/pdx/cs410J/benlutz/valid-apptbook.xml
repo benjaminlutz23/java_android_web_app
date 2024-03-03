@@ -24,4 +24,15 @@
         </end>
         <description>description</description>
     </appt>
+    <appt>
+        <begin>
+            <date day="14" month="1" year="2024"/>
+            <time hour="1" minute="0" time-zone="America/Los_Angeles"/>
+        </begin>
+        <end>
+            <date day="14" month="1" year="2024"/>
+            <time hour="13" minute="0" time-zone="America/Los_Angeles"/>
+        </end>
+        <description>More stuff</description>
+    </appt>
 </apptbook>
