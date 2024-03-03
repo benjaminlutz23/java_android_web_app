@@ -264,8 +264,14 @@ public class Project4 {
                             System.err.println("The owner name in the XML file does not match the provided owner name.");
                             return;
                         }
-                    } catch (IOException | ParserException e) {
+                    } catch (IOException e) {
+                        System.err.println("IOException: " + e.getMessage());
+                        return;
+                    } catch (ParserException e) {
                         System.err.println("Error reading from XML file: " + e.getMessage());
+                        return;
+                    } catch (RuntimeException e) {
+                        System.err.println("RuntimeException: " + e.getMessage());
                         return;
                     }
                 }

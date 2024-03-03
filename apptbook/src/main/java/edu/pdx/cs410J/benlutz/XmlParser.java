@@ -7,8 +7,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -65,12 +69,19 @@ public class XmlParser implements AppointmentBookParser<AppointmentBook> {
                 }
             }
             return book;
-        } catch (Exception | invalidOwnerException e) {
-            throw new ParserException("Error parsing XML", e);
-        } catch (invalidDescriptionException e) {
-            throw new RuntimeException(e);
+        } catch (ParserConfigurationException e) {
+            throw new ParserException("Parser configuration error", e);
+        } catch (SAXException e) {
+            throw new ParserException("Error parsing XML document", e);
+        } catch (IOException e) {
+            throw new ParserException("I/O error reading XML file", e);
+        } catch (invalidOwnerException | invalidDescriptionException e) {
+            throw new RuntimeException("Invalid owner or description", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error during XML parsing" + e.getMessage(), e);
         }
     }
+
 
     /**
      * Parses date and time information from an XML element and constructs a {@code ZonedDateTime} object.
