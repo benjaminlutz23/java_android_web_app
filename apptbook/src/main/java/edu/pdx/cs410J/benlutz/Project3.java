@@ -3,6 +3,7 @@ package edu.pdx.cs410J.benlutz;
 import edu.pdx.cs410J.ParserException;
 
 import java.io.*;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
@@ -24,7 +25,11 @@ public class Project3 {
   }
   */
 
-    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");
+    private static final DateTimeFormatter DATE_TIME_FORMAT = new DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .appendPattern("M/d/yyyy h:mm a VV")
+            .toFormatter();
+
 
     /**
      * The main entry point for the Appointment Book application
