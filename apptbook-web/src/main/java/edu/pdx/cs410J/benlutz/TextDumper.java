@@ -13,7 +13,7 @@ public class TextDumper {
 
   public void dump(Map<String, String> dictionary) {
     try (
-      PrintWriter pw = new PrintWriter(this.writer)
+            PrintWriter pw = new PrintWriter(this.writer)
     ){
       for (Map.Entry<String, String> entry : dictionary.entrySet()) {
         pw.println(entry.getKey() + " : " + entry.getValue());

@@ -28,7 +28,7 @@ public class PrettyPrinter {
 
   public void dump(Map<String, String> dictionary) {
     try (
-      PrintWriter pw = new PrintWriter(this.writer)
+            PrintWriter pw = new PrintWriter(this.writer)
     ) {
 
       pw.println(formatWordCount(dictionary.size()));

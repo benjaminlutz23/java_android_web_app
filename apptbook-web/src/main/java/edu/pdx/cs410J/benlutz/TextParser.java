@@ -23,7 +23,7 @@ public class TextParser {
     Map<String, String> map = new HashMap<>();
 
     try (
-      BufferedReader br = new BufferedReader(this.reader)
+            BufferedReader br = new BufferedReader(this.reader)
     ) {
 
       for (String line = br.readLine(); line != null; line = br.readLine()) {
