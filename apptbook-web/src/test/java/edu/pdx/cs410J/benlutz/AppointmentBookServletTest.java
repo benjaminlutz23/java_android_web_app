@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class AppointmentBookServletTest {
 
   @Test
-  void initiallyServletContainsNoDictionaryEntries() throws ServletException, IOException {
+  void initiallyServletContainsNoAppointments() throws ServletException, IOException {
     AppointmentBookServlet servlet = new AppointmentBookServlet();
 
     HttpServletRequest request = mock(HttpServletRequest.class);
@@ -35,19 +35,19 @@ public class AppointmentBookServletTest {
 
     // Nothing is written to the response's PrintWriter
     verify(pw, never()).println(anyString());
-    verify(response).setStatus(HttpServletResponse.SC_OK);
+    verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
   }
 
   @Test
-  void addOneWordToDictionary() throws ServletException, IOException {
+  void addOneAppointmentToAppointmentBook() throws ServletException, IOException {
     AppointmentBookServlet servlet = new AppointmentBookServlet();
 
-    String word = "TEST WORD";
-    String definition = "TEST DEFINITION";
+    String owner = "TEST OWNER";
+    String description = "TEST DESCRIPTION";
 
     HttpServletRequest request = mock(HttpServletRequest.class);
-    when(request.getParameter(AppointmentBookServlet.WORD_PARAMETER)).thenReturn(word);
-    when(request.getParameter(AppointmentBookServlet.DEFINITION_PARAMETER)).thenReturn(definition);
+    when(request.getParameter(AppointmentBookServlet.OWNER_PARAMETER)).thenReturn(owner);
+    when(request.getParameter(AppointmentBookServlet.DESCRIPTION_PARAMETER)).thenReturn(description);
 
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -59,7 +59,7 @@ public class AppointmentBookServletTest {
 
     servlet.doPost(request, response);
 
-    assertThat(stringWriter.toString(), containsString(Messages.definedWordAs(word, definition)));
+    assertThat(stringWriter.toString(), containsString(Messages.createdAppointment(owner, description)));
 
     // Use an ArgumentCaptor when you want to make multiple assertions against the value passed to the mock
     ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
@@ -67,7 +67,7 @@ public class AppointmentBookServletTest {
 
     assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_OK));
 
-    assertThat(servlet.getDefinition(word), equalTo(definition));
+    assertThat(servlet.getDefinition(owner), equalTo(description));
   }
 
 }

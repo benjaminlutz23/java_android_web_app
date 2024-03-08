@@ -6,9 +6,9 @@ import org.junit.jupiter.api.MethodOrderer.MethodName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -30,35 +30,38 @@ class AppointmentBookRestClientIT {
   @Test
   void test0RemoveAllDictionaryEntries() throws IOException {
     AppointmentBookRestClient client = newAppointmentBookRestClient();
-    client.removeAllDictionaryEntries();
+    client.removeAllAppointmentBooks();
   }
 
   @Test
   void test1EmptyServerContainsNoDictionaryEntries() throws IOException, ParserException {
     AppointmentBookRestClient client = newAppointmentBookRestClient();
-    Map<String, String> dictionary = client.getAllDictionaryEntries();
-    assertThat(dictionary.size(), equalTo(0));
+    try {
+      client.getAllDictionaryEntries();
+    } catch (RestException ex) {
+      assertThat(ex.getHttpStatusCode(), equalTo(HttpServletResponse.SC_NOT_FOUND));
+    }
   }
 
   @Test
-  void test2DefineOneWord() throws IOException, ParserException {
+  void test2CreateNewAppointment() throws IOException, ParserException {
     AppointmentBookRestClient client = newAppointmentBookRestClient();
-    String testWord = "TEST WORD";
-    String testDefinition = "TEST DEFINITION";
-    client.addDictionaryEntry(testWord, testDefinition);
+    String owner = "TEST OWNERS";
+    String description = "TEST DESCRIPTION";
+    client.addDictionaryEntry(owner, description);
 
-    String definition = client.getDefinition(testWord);
-    assertThat(definition, equalTo(testDefinition));
+    String definition = client.getDefinition(owner);
+    assertThat(definition, equalTo(description));
   }
 
   @Test
-  void test4EmptyWordThrowsException() {
+  void test4NonExistentAppointmentBookThrowsException() {
     AppointmentBookRestClient client = newAppointmentBookRestClient();
     String emptyString = "";
 
     RestException ex =
       assertThrows(RestException.class, () -> client.addDictionaryEntry(emptyString, emptyString));
     assertThat(ex.getHttpStatusCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
-    assertThat(ex.getMessage(), equalTo(Messages.missingRequiredParameter(AppointmentBookServlet.WORD_PARAMETER)));  }
+    assertThat(ex.getMessage(), equalTo(Messages.missingRequiredParameter(AppointmentBookServlet.OWNER_PARAMETER)));  }
 
 }
