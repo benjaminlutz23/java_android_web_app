@@ -18,8 +18,8 @@ import java.util.Map;
  */
 public class AppointmentBookServlet extends HttpServlet
 {
-    static final String WORD_PARAMETER = "word";
-    static final String DEFINITION_PARAMETER = "definition";
+    static final String OWNER_PARAMETER = "owner";
+    static final String DESCRIPTION_PARAMETER = "description";
 
     private final Map<String, String> dictionary = new HashMap<>();
 
@@ -34,12 +34,13 @@ public class AppointmentBookServlet extends HttpServlet
     {
         response.setContentType( "text/plain" );
 
-        String word = getParameter( WORD_PARAMETER, request );
-        if (word != null) {
-            writeDefinition(word, response);
+        String owner = getParameter(OWNER_PARAMETER, request );
+        if (owner != null) {
+            //Used to be writeDefinition
+            writeAppointmentBook(owner, response);
 
         } else {
-            writeAllDictionaryEntries(response);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
@@ -53,22 +54,22 @@ public class AppointmentBookServlet extends HttpServlet
     {
         response.setContentType( "text/plain" );
 
-        String word = getParameter(WORD_PARAMETER, request );
-        if (word == null) {
-            missingRequiredParameter(response, WORD_PARAMETER);
+        String owner = getParameter(OWNER_PARAMETER, request );
+        if (owner == null) {
+            missingRequiredParameter(response, OWNER_PARAMETER);
             return;
         }
 
-        String definition = getParameter(DEFINITION_PARAMETER, request );
-        if ( definition == null) {
-            missingRequiredParameter( response, DEFINITION_PARAMETER );
+        String description = getParameter(DESCRIPTION_PARAMETER, request );
+        if ( description == null) {
+            missingRequiredParameter( response, DESCRIPTION_PARAMETER);
             return;
         }
 
-        this.dictionary.put(word, definition);
+        this.dictionary.put(owner, description);
 
         PrintWriter pw = response.getWriter();
-        pw.println(Messages.definedWordAs(word, definition));
+        pw.println(Messages.definedWordAs(owner, description));
         pw.flush();
 
         response.setStatus( HttpServletResponse.SC_OK);
@@ -86,7 +87,7 @@ public class AppointmentBookServlet extends HttpServlet
         this.dictionary.clear();
 
         PrintWriter pw = response.getWriter();
-        pw.println(Messages.allDictionaryEntriesDeleted());
+        pw.println(Messages.allAppointmentBooksDeleted());
         pw.flush();
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -110,7 +111,7 @@ public class AppointmentBookServlet extends HttpServlet
      *
      * The text of the message is formatted with {@link TextDumper}
      */
-    private void writeDefinition(String word, HttpServletResponse response) throws IOException {
+    private void writeAppointmentBook(String word, HttpServletResponse response) throws IOException {
         String definition = this.dictionary.get(word);
 
         if (definition == null) {
@@ -158,7 +159,7 @@ public class AppointmentBookServlet extends HttpServlet
     }
 
     @VisibleForTesting
-    String getDefinition(String word) {
+    String getAppointment(String word) {
         return this.dictionary.get(word);
     }
 }
