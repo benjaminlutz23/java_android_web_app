@@ -16,58 +16,60 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
 
 /**
- * A unit test for the {@link AppointmentBookServlet}.  It uses mockito to
- * provide mock http requests and responses.
+ * A unit test for the {@link AppointmentBookServlet}. It uses Mockito to
+ * provide mock HTTP requests and responses.
  */
 public class AppointmentBookServletTest {
 
   @Test
-  void initiallyServletContainsNoAppointments() throws ServletException, IOException {
+  void initiallyServletContainsNoAppointmentBooks() throws ServletException, IOException {
     AppointmentBookServlet servlet = new AppointmentBookServlet();
 
     HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getParameter(AppointmentBookServlet.OWNER_PARAMETER)).thenReturn("TEST OWNER");
+
     HttpServletResponse response = mock(HttpServletResponse.class);
-    PrintWriter pw = mock(PrintWriter.class);
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter pw = new PrintWriter(stringWriter);
 
     when(response.getWriter()).thenReturn(pw);
 
     servlet.doGet(request, response);
 
-    // Nothing is written to the response's PrintWriter
-    verify(pw, never()).println(anyString());
-    verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+    verify(response).sendError(HttpServletResponse.SC_NOT_FOUND, "No appointment book for owner: TEST OWNER");
   }
 
   @Test
   void addOneAppointmentToAppointmentBook() throws ServletException, IOException {
     AppointmentBookServlet servlet = new AppointmentBookServlet();
 
-    String owner = "TEST OWNER";
-    String description = "TEST DESCRIPTION";
-
     HttpServletRequest request = mock(HttpServletRequest.class);
-    when(request.getParameter(AppointmentBookServlet.OWNER_PARAMETER)).thenReturn(owner);
-    when(request.getParameter(AppointmentBookServlet.DESCRIPTION_PARAMETER)).thenReturn(description);
-
     HttpServletResponse response = mock(HttpServletResponse.class);
 
-    // Use a StringWriter to gather the text from multiple calls to println()
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter pw = new PrintWriter(stringWriter, true);
+    when(request.getParameter(AppointmentBookServlet.OWNER_PARAMETER)).thenReturn("Dave");
+    when(request.getParameter(AppointmentBookServlet.DESCRIPTION_PARAMETER)).thenReturn("Teach Java Class");
+    when(request.getParameter(AppointmentBookServlet.BEGIN_PARAMETER)).thenReturn("10/19/2024 6:00 PM America/Los_Angeles");
+    when(request.getParameter(AppointmentBookServlet.END_PARAMETER)).thenReturn("10/19/2024 9:30 PM America/Los_Angeles");
 
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
     when(response.getWriter()).thenReturn(pw);
 
     servlet.doPost(request, response);
 
-    assertThat(stringWriter.toString(), containsString(Messages.createdAppointment(owner, description)));
+    ArgumentCaptor<Integer> statusCodeCaptor = ArgumentCaptor.forClass(Integer.class);
+    verify(response).setStatus(statusCodeCaptor.capture());
 
-    // Use an ArgumentCaptor when you want to make multiple assertions against the value passed to the mock
-    ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
-    verify(response).setStatus(statusCode.capture());
+    assertThat(statusCodeCaptor.getValue(), equalTo(HttpServletResponse.SC_OK));
+    assertThat(sw.toString(), containsString("Appointment added for Dave"));
 
-    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_OK));
+    // Verify doGet with owner name returns the appointment added
+    sw = new StringWriter(); // Reset StringWriter to capture doGet response
+    pw = new PrintWriter(sw);
+    when(response.getWriter()).thenReturn(pw);
 
-    assertThat(servlet.getDefinition(owner), equalTo(description));
+    servlet.doGet(request, response);
+    assertThat(sw.toString(), containsString("Teach Java Class"));
   }
-
 }
+

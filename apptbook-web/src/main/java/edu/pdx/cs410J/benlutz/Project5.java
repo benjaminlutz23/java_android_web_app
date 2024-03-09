@@ -13,106 +13,106 @@ import java.util.Map;
  */
 public class Project5 {
 
-    public static final String MISSING_ARGS = "Missing command line arguments";
-
-    public static void main(String... args) {
-        String hostName = null;
+    public static void main(String[] args) {
+        String host = null;
         String portString = null;
-        String word = null;
-        String definition = null;
+        boolean search = false;
+        boolean print = false;
+        boolean readme = false;
+        String owner = null;
+        String description = null;
+        String begin = null;
+        String end = null;
 
-        for (String arg : args) {
-            if (hostName == null) {
-                hostName = arg;
-
-            } else if ( portString == null) {
-                portString = arg;
-
-            } else if (word == null) {
-                word = arg;
-
-            } else if (definition == null) {
-                definition = arg;
-
-            } else {
-                usage("Extraneous command line argument: " + arg);
+        // Parse command-line options
+        int index = 0;
+        while (index < args.length && args[index].startsWith("-")) {
+            switch (args[index]) {
+                case "-host":
+                    host = args[++index];
+                    break;
+                case "-port":
+                    portString = args[++index];
+                    break;
+                case "-search":
+                    search = true;
+                    break;
+                case "-print":
+                    print = true;
+                    break;
+                case "-README":
+                    readme = true;
+                    printReadme();
+                    return;
+                default:
+                    printError("Unknown option: " + args[index]);
+                    return;
             }
+            index++;
         }
 
-        if (hostName == null) {
-            usage( MISSING_ARGS );
-            return;
-
-        } else if ( portString == null) {
-            usage( "Missing port" );
+        // Validate host and port
+        if ((host == null) != (portString == null)) {
+            printError("Both host and port must be specified together");
             return;
         }
 
-        int port;
-        try {
-            port = Integer.parseInt( portString );
+        // Additional arguments based on the operation mode
+        if (!search) {
+            // Add or print appointment
+            if (index < args.length) owner = args[index++];
+            if (index < args.length) description = args[index++];
+            if (index < args.length) begin = args[index++];
+            if (index < args.length) end = args[index++];
+        } else {
+            // Search mode
+            if (index < args.length) owner = args[index++];
+            if (index < args.length) begin = args[index++];
+            if (index < args.length) end = args[index++];
+        }
 
-        } catch (NumberFormatException ex) {
-            usage("Port \"" + portString + "\" must be an integer");
+        // Error handling for required fields
+        if (owner == null) {
+            printError("Owner is required.");
             return;
         }
 
-        AppointmentBookRestClient client = new AppointmentBookRestClient(hostName, port);
-
-        String message;
-        try {
-            if (word == null) {
-                // Print all word/definition pairs
-                Map<String, String> dictionary = client.getAllDictionaryEntries();
-                StringWriter sw = new StringWriter();
-                PrettyPrinter pretty = new PrettyPrinter(sw);
-                pretty.dump(dictionary);
-                message = sw.toString();
-
-            } else if (definition == null) {
-                // Print all dictionary entries
-                message = PrettyPrinter.formatDictionaryEntry(word, client.getDefinition(word));
-
-            } else {
-                // Post the word/definition pair
-                client.addDictionaryEntry(word, definition);
-                message = Messages.createdAppointment(word, definition);
+        // Perform action based on the mode
+        if (search) {
+            // Validate begin and end dates
+            if (begin == null || end == null) {
+                printError("Both begin and end times are required for search.");
+                return;
             }
-
-        } catch (IOException | ParserException ex ) {
-            error("While contacting server: " + ex.getMessage());
-            return;
+            searchAppointments(host, portString, owner, begin, end);
+        } else {
+            // Validate for adding a new appointment
+            if (description == null || begin == null || end == null) {
+                printError("Description, begin time, and end time are required for adding a new appointment.");
+                return;
+            }
+            addAppointment(host, portString, owner, description, begin, end);
         }
 
-        System.out.println(message);
+        if (print) {
+            // Printing logic here, if needed
+        }
     }
 
-    private static void error( String message )
-    {
-        PrintStream err = System.err;
-        err.println("** " + message);
+    private static void printReadme() {
+        // Print README information
     }
 
-    /**
-     * Prints usage information for this program and exits
-     * @param message An error message to print
-     */
-    private static void usage( String message )
-    {
-        PrintStream err = System.err;
-        err.println("** " + message);
-        err.println();
-        err.println("usage: java Project5 host port [word] [definition]");
-        err.println("  host         Host of web server");
-        err.println("  port         Port of web server");
-        err.println("  word         Word in dictionary");
-        err.println("  definition   Definition of word");
-        err.println();
-        err.println("This simple program posts words and their definitions");
-        err.println("to the server.");
-        err.println("If no definition is specified, then the word's definition");
-        err.println("is printed.");
-        err.println("If no word is specified, all dictionary entries are printed");
-        err.println();
+    private static void printError(String message) {
+        System.err.println(message);
+        // Optionally print usage information
+    }
+
+    private static void searchAppointments(String host, String port, String owner, String begin, String end) {
+        // Logic to send a search request to the server
+    }
+
+    private static void addAppointment(String host, String port, String owner, String description, String begin, String end) {
+        // Logic to send a request to add a new appointment to the server
     }
 }
