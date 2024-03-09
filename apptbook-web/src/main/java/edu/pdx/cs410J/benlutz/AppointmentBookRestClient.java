@@ -1,21 +1,16 @@
 package edu.pdx.cs410J.benlutz;
 
-import com.google.common.annotations.VisibleForTesting;
-import edu.pdx.cs410J.ParserException;
 import edu.pdx.cs410J.web.HttpRequestHelper;
 
 import java.io.IOException;
-import java.io.StringReader;
+import java.util.HashMap;
 import java.util.Map;
 
 import static edu.pdx.cs410J.web.HttpRequestHelper.Response;
-import static edu.pdx.cs410J.web.HttpRequestHelper.RestException;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
- * A helper class for accessing the rest client.  Note that this class provides
- * an example of how to make gets and posts to a URL.  You'll need to change it
- * to do something other than just send dictionary entries.
+ * A helper class for accessing the REST client to manage appointment books.
  */
 public class AppointmentBookRestClient {
   private static final String WEB_APP = "apptbook";
@@ -23,66 +18,59 @@ public class AppointmentBookRestClient {
 
   private final HttpRequestHelper http;
 
-
   /**
-   * Creates a client to the appointment book REST service running on the given host and port
+   * Creates a client to the appointment book REST service running on the given host and port.
    *
    * @param hostName The name of the host
    * @param port     The port
    */
   public AppointmentBookRestClient(String hostName, int port) {
-    this(new HttpRequestHelper(String.format("http://%s:%d/%s/%s", hostName, port, WEB_APP, SERVLET)));
-  }
-
-  @VisibleForTesting
-  AppointmentBookRestClient(HttpRequestHelper http) {
-    this.http = http;
+    this.http = new HttpRequestHelper(String.format("http://%s:%d/%s/%s", hostName, port, WEB_APP, SERVLET));
   }
 
   /**
-   * Returns all dictionary entries from the server
+   * Posts a new appointment to the server.
+   *
+   * @param owner       The owner of the appointment book
+   * @param description The description of the appointment
+   * @param begin       The start time of the appointment
+   * @param end         The end time of the appointment
+   * @throws IOException If there is an issue with the network communication
    */
-  public Map<String, String> getAllDictionaryEntries() throws IOException, ParserException {
-    Response response = http.get(Map.of());
-    throwExceptionIfNotOkayHttpStatus(response);
+  public void addAppointment(String owner, String description, String begin, String end) throws IOException {
+    Map<String, String> params = new HashMap<>();
+    params.put(AppointmentBookServlet.OWNER_PARAMETER, owner);
+    params.put(AppointmentBookServlet.DESCRIPTION_PARAMETER, description);
+    params.put(AppointmentBookServlet.BEGIN_PARAMETER, begin);
+    params.put(AppointmentBookServlet.END_PARAMETER, end);
 
-    TextParser parser = new TextParser(new StringReader(response.getContent()));
-    return parser.parse();
+    Response response = http.post(params);
+    checkResponseCode(HTTP_OK, response);
   }
 
   /**
-   * Returns the definition for the given word
+   * Searches for appointments within the given date range.
+   *
+   * @param owner The owner of the appointment book
+   * @param begin The start time of the range
+   * @param end   The end time of the range
+   * @return The server's response as a String
+   * @throws IOException If there is an issue with the network communication
    */
-  public String getDefinition(String word) throws IOException, ParserException {
-    Response response = http.get(Map.of(AppointmentBookServlet.OWNER_PARAMETER, word));
-    throwExceptionIfNotOkayHttpStatus(response);
-    String content = response.getContent();
+  public String searchAppointments(String owner, String begin, String end) throws IOException {
+    Map<String, String> params = new HashMap<>();
+    params.put(AppointmentBookServlet.OWNER_PARAMETER, owner);
+    params.put(AppointmentBookServlet.BEGIN_PARAMETER, begin);
+    params.put(AppointmentBookServlet.END_PARAMETER, end);
 
-    TextParser parser = new TextParser(new StringReader(content));
-    return parser.parse().get(word);
+    Response response = http.get(params);
+    checkResponseCode(HTTP_OK, response);
+    return response.getContent();
   }
 
-  public void addDictionaryEntry(String word, String definition) throws IOException {
-    Response response = postToMyURL(Map.of(AppointmentBookServlet.OWNER_PARAMETER, word, AppointmentBookServlet.DESCRIPTION_PARAMETER, definition));
-    throwExceptionIfNotOkayHttpStatus(response);
-  }
-
-  @VisibleForTesting
-  Response postToMyURL(Map<String, String> dictionaryEntries) throws IOException {
-    return http.post(dictionaryEntries);
-  }
-
-  public void removeAllAppointmentBooks() throws IOException {
-    Response response = http.delete(Map.of());
-    throwExceptionIfNotOkayHttpStatus(response);
-  }
-
-  private void throwExceptionIfNotOkayHttpStatus(Response response) {
-    int code = response.getHttpStatusCode();
-    if (code != HTTP_OK) {
-      String message = response.getContent();
-      throw new RestException(code, message);
+  private void checkResponseCode(int expected, Response response) {
+    if (response.getHttpStatusCode() != expected) {
+      throw new HttpRequestHelper.RestException(response.getHttpStatusCode(), response.getContent());
     }
   }
-
 }
