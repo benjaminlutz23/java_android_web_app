@@ -42,28 +42,29 @@ public class AppointmentBookRestClient {
   /**
    * Returns all dictionary entries from the server
    */
-  public Map<String, String> getAllDictionaryEntries() throws IOException, ParserException {
+  public AppointmentBook getAllDictionaryEntries() throws IOException, ParserException {
     Response response = http.get(Map.of());
     throwExceptionIfNotOkayHttpStatus(response);
 
     TextParser parser = new TextParser(new StringReader(response.getContent()));
-    return parser.parse();
+    return null;
   }
 
   /**
    * Returns the definition for the given word
    */
-  public String getDefinition(String word) throws IOException, ParserException {
-    Response response = http.get(Map.of(AppointmentBookServlet.OWNER_PARAMETER, word));
+  public AppointmentBook getAppointmentBook(String owner) throws IOException, ParserException {
+    Response response = http.get(Map.of(AppointmentBookServlet.OWNER_PARAMETER, owner));
     throwExceptionIfNotOkayHttpStatus(response);
     String content = response.getContent();
 
     TextParser parser = new TextParser(new StringReader(content));
-    return parser.parse().get(word);
+    return parser.parse();
   }
 
-  public void addDictionaryEntry(String word, String definition) throws IOException {
-    Response response = postToMyURL(Map.of(AppointmentBookServlet.OWNER_PARAMETER, word, AppointmentBookServlet.DESCRIPTION_PARAMETER, definition));
+  public void addAppointment(String owner, Appointment appointment) throws IOException {
+    String description = appointment.getDescription();
+    Response response = postToMyURL(Map.of(AppointmentBookServlet.OWNER_PARAMETER, owner, AppointmentBookServlet.DESCRIPTION_PARAMETER, description));
     throwExceptionIfNotOkayHttpStatus(response);
   }
 
@@ -72,7 +73,7 @@ public class AppointmentBookRestClient {
     return http.post(dictionaryEntries);
   }
 
-  public void removeAllAppointmentBook() throws IOException {
+  public void removeAllAppointmentBooks() throws IOException {
     Response response = http.delete(Map.of());
     throwExceptionIfNotOkayHttpStatus(response);
   }

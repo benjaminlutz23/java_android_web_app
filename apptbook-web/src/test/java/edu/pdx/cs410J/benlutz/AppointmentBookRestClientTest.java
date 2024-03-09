@@ -2,6 +2,7 @@ package edu.pdx.cs410J.benlutz;
 
 import edu.pdx.cs410J.ParserException;
 import edu.pdx.cs410J.web.HttpRequestHelper;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,22 +16,26 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class AppointmentBookRestClientTest {
-
   @Test
-  void getAllDictionaryEntriesPerformsHttpGetWithNoParameters() throws ParserException, IOException {
-    Map<String, String> dictionary = Map.of("One", "1", "Two", "2");
+  void getAllDictionaryEntriesPerformsHttpGetWithNoParameters() throws ParserException, IOException, invalidOwnerException {
+    String owner = "TEST OWNER";
+    AppointmentBook appointmentBook = new AppointmentBook(owner);
+    String description = "TEST DESCRIPTION";
+    appointmentBook.addAppointment(new Appointment(description));
 
     HttpRequestHelper http = mock(HttpRequestHelper.class);
-    when(http.get(eq(Map.of()))).thenReturn(dictionaryAsText(dictionary));
+    when(http.get(eq(Map.of()))).thenReturn(appointmentBookAsText(appointmentBook));
 
     AppointmentBookRestClient client = new AppointmentBookRestClient(http);
 
-    assertThat(client.getAllDictionaryEntries(), equalTo(dictionary));
+    AppointmentBook appointmentBook2 = client.getAppointmentBook(owner);
+    assertThat(appointmentBook2.getOwnerName(), equalTo(owner));
+    assertThat(appointmentBook2.getAppointments().iterator().next().getDescription(), equalTo(description));
   }
 
-  private HttpRequestHelper.Response dictionaryAsText(Map<String, String> dictionary) {
+  private HttpRequestHelper.Response appointmentBookAsText(AppointmentBook appointmentBook) {
     StringWriter writer = new StringWriter();
-    new TextDumper(writer).dump(dictionary);
+    new TextDumper(writer).dump(appointmentBook);
 
     return new HttpRequestHelper.Response(writer.toString());
   }

@@ -5,7 +5,6 @@ import edu.pdx.cs410J.ParserException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
-import java.util.Map;
 
 /**
  * The main class that parses the command line and communicates with the
@@ -18,8 +17,8 @@ public class Project5 {
     public static void main(String... args) {
         String hostName = null;
         String portString = null;
-        String word = null;
-        String definition = null;
+        String owner = null;
+        String description = null;
 
         for (String arg : args) {
             if (hostName == null) {
@@ -28,11 +27,11 @@ public class Project5 {
             } else if ( portString == null) {
                 portString = arg;
 
-            } else if (word == null) {
-                word = arg;
+            } else if (owner == null) {
+                owner = arg;
 
-            } else if (definition == null) {
-                definition = arg;
+            } else if (description == null) {
+                description = arg;
 
             } else {
                 usage("Extraneous command line argument: " + arg);
@@ -61,22 +60,24 @@ public class Project5 {
 
         String message;
         try {
-            if (word == null) {
+            if (owner == null) {
                 // Print all word/definition pairs
-                Map<String, String> dictionary = client.getAllDictionaryEntries();
+                AppointmentBook book = client.getAllDictionaryEntries();
                 StringWriter sw = new StringWriter();
                 PrettyPrinter pretty = new PrettyPrinter(sw);
-                pretty.dump(dictionary);
+                pretty.dump(book);
                 message = sw.toString();
 
-            } else if (definition == null) {
+            } else if (description == null) {
                 // Print all dictionary entries
-                message = PrettyPrinter.formatDictionaryEntry(word, client.getDefinition(word));
+                AppointmentBook appointmentBook = client.getAppointmentBook(owner);
+                Appointment appointment = appointmentBook.getAppointments().iterator().next();
+                message = PrettyPrinter.formatAppointmentDescription(owner, appointment.getDescription());
 
             } else {
                 // Post the word/definition pair
-                client.addDictionaryEntry(word, definition);
-                message = Messages.definedWordAs(word, definition);
+                client.addAppointment(owner, new Appointment(description));
+                message = Messages.definedWordAs(owner, description);
             }
 
         } catch (IOException | ParserException ex ) {

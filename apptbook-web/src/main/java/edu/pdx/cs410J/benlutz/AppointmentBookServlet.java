@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * This servlet ultimately provides a REST API for working with an
  * <code>AppointmentBook</code>.  However, in its current state, it is an example
- * of how to use HTTP and Java servlets to store simple dictionary of words
+ * of how to use HTTP and Java servlets to store simple appointmentBooks of words
  * and their definitions.
  */
 public class AppointmentBookServlet extends HttpServlet
@@ -21,12 +21,12 @@ public class AppointmentBookServlet extends HttpServlet
     static final String OWNER_PARAMETER = "owner";
     static final String DESCRIPTION_PARAMETER = "description";
 
-    private final Map<String, String> dictionary = new HashMap<>();
+    private final Map<String, AppointmentBook> appointmentBooks = new HashMap<>();
 
     /**
      * Handles an HTTP GET request from a client by writing the definition of the
      * word specified in the "word" HTTP parameter to the HTTP response.  If the
-     * "word" parameter is not specified, all of the entries in the dictionary
+     * "word" parameter is not specified, all of the entries in the appointmentBooks
      * are written to the HTTP response.
      */
     @Override
@@ -45,8 +45,8 @@ public class AppointmentBookServlet extends HttpServlet
     }
 
     /**
-     * Handles an HTTP POST request by storing the dictionary entry for the
-     * "word" and "definition" request parameters.  It writes the dictionary
+     * Handles an HTTP POST request by storing the appointmentBooks entry for the
+     * "word" and "definition" request parameters.  It writes the appointmentBooks
      * entry to the HTTP response.
      */
     @Override
@@ -66,7 +66,7 @@ public class AppointmentBookServlet extends HttpServlet
             return;
         }
 
-        this.dictionary.put(owner, description);
+        addAppointmentToBook(owner, description);
 
         PrintWriter pw = response.getWriter();
         pw.println(Messages.definedWordAs(owner, description));
@@ -75,8 +75,27 @@ public class AppointmentBookServlet extends HttpServlet
         response.setStatus( HttpServletResponse.SC_OK);
     }
 
+    private void addAppointmentToBook(String owner, String description) {
+        try {
+            AppointmentBook appointmentBook = this.appointmentBooks.computeIfAbsent(owner, k -> {
+                try {
+                    return new AppointmentBook(k);
+                } catch (invalidOwnerException e) {
+                    // Handle the invalid owner case here
+                    // For example, log the error and/or throw a runtime exception
+                    throw new RuntimeException("Invalid owner: " + owner, e);
+                }
+            });
+            appointmentBook.addAppointment(new Appointment(description));
+        } catch (RuntimeException e) {
+            // Handle or log the exception as needed
+            System.err.println("Exception when adding an appointment: " + e.getMessage());
+        }
+    }
+
+
     /**
-     * Handles an HTTP DELETE request by removing all dictionary entries.  This
+     * Handles an HTTP DELETE request by removing all appointmentBooks entries.  This
      * behavior is exposed for testing purposes only.  It's probably not
      * something that you'd want a real application to expose.
      */
@@ -84,7 +103,7 @@ public class AppointmentBookServlet extends HttpServlet
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain");
 
-        this.dictionary.clear();
+        this.appointmentBooks.clear();
 
         PrintWriter pw = response.getWriter();
         pw.println(Messages.allAppointmentBooksDeleted());
@@ -111,35 +130,20 @@ public class AppointmentBookServlet extends HttpServlet
      *
      * The text of the message is formatted with {@link TextDumper}
      */
-    private void writeAppointmentBook(String word, HttpServletResponse response) throws IOException {
-        String definition = this.dictionary.get(word);
+    private void writeAppointmentBook(String owner, HttpServletResponse response) throws IOException {
+        AppointmentBook book = this.appointmentBooks.get(owner);
 
-        if (definition == null) {
+        if (book == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
         } else {
             PrintWriter pw = response.getWriter();
 
-            Map<String, String> wordDefinition = Map.of(word, definition);
             TextDumper dumper = new TextDumper(pw);
-            dumper.dump(wordDefinition);
+            dumper.dump(book);
 
             response.setStatus(HttpServletResponse.SC_OK);
         }
-    }
-
-    /**
-     * Writes all of the dictionary entries to the HTTP response.
-     *
-     * The text of the message is formatted with {@link TextDumper}
-     */
-    private void writeAllDictionaryEntries(HttpServletResponse response ) throws IOException
-    {
-        PrintWriter pw = response.getWriter();
-        TextDumper dumper = new TextDumper(pw);
-        dumper.dump(dictionary);
-
-        response.setStatus( HttpServletResponse.SC_OK );
     }
 
     /**
@@ -150,7 +154,7 @@ public class AppointmentBookServlet extends HttpServlet
      */
     private String getParameter(String name, HttpServletRequest request) {
       String value = request.getParameter(name);
-      if (value == null || "".equals(value)) {
+      if (value == null || value.isEmpty()) {
         return null;
 
       } else {
@@ -159,7 +163,7 @@ public class AppointmentBookServlet extends HttpServlet
     }
 
     @VisibleForTesting
-    String getAppointment(String word) {
-        return this.dictionary.get(word);
+    AppointmentBook getAppointment(String word) {
+        return this.appointmentBooks.get(word);
     }
 }

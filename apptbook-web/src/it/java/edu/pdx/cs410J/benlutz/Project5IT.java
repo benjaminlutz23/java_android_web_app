@@ -27,7 +27,7 @@ class Project5IT extends InvokeMainTestCase {
     @Test
     void test0RemoveAllAppointmentBooks() throws IOException {
       AppointmentBookRestClient client = new AppointmentBookRestClient(HOSTNAME, Integer.parseInt(PORT));
-      client.removeAllAppointmentBook();
+      client.removeAllAppointmentBooks();
     }
 
     @Test
@@ -66,6 +66,6 @@ class Project5IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
 
         out = result.getTextWrittenToStandardOut();
-        assertThat(out, out, containsString(PrettyPrinter.formatDictionaryEntry(owner, description)));
+        assertThat(out, out, containsString(PrettyPrinter.formatAppointmentDescription(owner, description)));
     }
 }

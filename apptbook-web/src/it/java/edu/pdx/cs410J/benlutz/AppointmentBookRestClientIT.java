@@ -30,7 +30,7 @@ class AppointmentBookRestClientIT {
   @Test
   void test0RemoveAllDictionaryEntries() throws IOException {
     AppointmentBookRestClient client = newAppointmentBookRestClient();
-    client.removeAllAppointmentBook();
+    client.removeAllAppointmentBooks();
   }
 
   @Test
@@ -48,10 +48,12 @@ class AppointmentBookRestClientIT {
     AppointmentBookRestClient client = newAppointmentBookRestClient();
     String testOwner = "TEST OWNER";
     String testDescription = "TEST DESCRIPTION";
-    client.addDictionaryEntry(testOwner, testDescription);
+    client.addAppointment(testOwner, new Appointment(testDescription));
 
-    String definition = client.getDefinition(testOwner);
-    assertThat(definition, equalTo(testDescription));
+    AppointmentBook book = client.getAppointmentBook(testOwner);
+    assertThat(book.getOwnerName(), equalTo(testOwner));
+    Appointment appointment = book.getAppointments().iterator().next();
+    assertThat(appointment.getDescription(), equalTo(testDescription));
   }
 
   @Test
@@ -60,7 +62,7 @@ class AppointmentBookRestClientIT {
     String emptyString = "";
 
     RestException ex =
-      assertThrows(RestException.class, () -> client.addDictionaryEntry(emptyString, emptyString));
+      assertThrows(RestException.class, () -> client.addAppointment(emptyString, new Appointment(emptyString)));
     assertThat(ex.getHttpStatusCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
     assertThat(ex.getMessage(), equalTo(Messages.missingRequiredParameter(AppointmentBookServlet.OWNER_PARAMETER)));  }
 
