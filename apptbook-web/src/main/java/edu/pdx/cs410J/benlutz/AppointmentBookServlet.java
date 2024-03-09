@@ -163,7 +163,7 @@ public class AppointmentBookServlet extends HttpServlet
     }
 
     @VisibleForTesting
-    AppointmentBook getAppointment(String word) {
+    AppointmentBook getAppointmentBook(String word) {
         return this.appointmentBooks.get(word);
     }
 }

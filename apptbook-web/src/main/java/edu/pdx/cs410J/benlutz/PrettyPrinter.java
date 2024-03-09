@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.benlutz;
 
+import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs410J.AppointmentBookDumper;
 
 import java.io.PrintWriter;
@@ -30,9 +31,9 @@ public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook> {
         this.writer = writer;
     }
 
+    @VisibleForTesting
     public static String formatAppointmentDescription(String owner, String description) {
-        //Does nothing for now
-        return null;
+        return owner + " " + description;
     }
 
     /**
