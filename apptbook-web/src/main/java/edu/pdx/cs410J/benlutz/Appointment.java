@@ -44,15 +44,6 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
     this.endTime = endTime;
   }
 
-  public Appointment(String description) {
-    this.description = description;
-
-    String beginTimeString = "01/30/2023 9:00 AM America/Los_Angeles";
-    String endTimeString = "01/30/2023 9:00 AM America/Los_Angeles";
-    this.beginTime = ZonedDateTime.parse(beginTimeString, DATE_TIME_FORMAT);
-    this.endTime = ZonedDateTime.parse(endTimeString, DATE_TIME_FORMAT);
-  }
-
     /**
    * Retrieves the start time of the appointment
    *

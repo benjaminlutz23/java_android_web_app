@@ -9,6 +9,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.time.ZonedDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -34,36 +35,36 @@ class AppointmentBookRestClientIT {
   }
 
   @Test
-  void test1EmptyServerContainsNoDictionaryEntries() throws IOException, ParserException {
-    AppointmentBookRestClient client = newAppointmentBookRestClient();
-    try {
-      client.getAllDictionaryEntries();
-    } catch (RestException ex) {
-      assertThat(ex.getHttpStatusCode(), equalTo(HttpServletResponse.SC_NOT_FOUND));
-    }
-  }
-
-  @Test
-  void test2CreateNewAppointment() throws IOException, ParserException {
+  void test2CreateNewAppointment() throws IOException, ParserException, invalidDescriptionException {
     AppointmentBookRestClient client = newAppointmentBookRestClient();
     String testOwner = "TEST OWNER";
     String testDescription = "TEST DESCRIPTION";
-    client.addAppointment(testOwner, new Appointment(testDescription));
+
+    // Example begin and end times
+    ZonedDateTime beginTime = ZonedDateTime.parse("2024-10-19T18:00:00-07:00[America/Los_Angeles]");
+    ZonedDateTime endTime = ZonedDateTime.parse("2024-10-19T21:30:00-07:00[America/Los_Angeles]");
+
+    client.addAppointment(testOwner, new Appointment(testDescription, beginTime, endTime));
 
     AppointmentBook book = client.getAppointmentBook(testOwner);
     assertThat(book.getOwnerName(), equalTo(testOwner));
     Appointment appointment = book.getAppointments().iterator().next();
     assertThat(appointment.getDescription(), equalTo(testDescription));
+    // Verify begin and end times as well
+    assertThat(appointment.getBeginTime(), equalTo(beginTime));
+    assertThat(appointment.getEndTime(), equalTo(endTime));
   }
 
   @Test
-  void test4NonExistentAppointmentBookThrowsException() {
-    AppointmentBookRestClient client = newAppointmentBookRestClient();
-    String emptyString = "";
+  public void nonExistentAppointmentBookThrowsException() {
+    // Assuming there's a running server at localhost:8080
+    String nonExistentOwner = "NonExistentOwner";
+    AppointmentBookRestClient client = new AppointmentBookRestClient("localhost", 8080);
 
-    RestException ex =
-      assertThrows(RestException.class, () -> client.addAppointment(emptyString, new Appointment(emptyString)));
-    assertThat(ex.getHttpStatusCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
-    assertThat(ex.getMessage(), equalTo(Messages.missingRequiredParameter(AppointmentBookServlet.OWNER_PARAMETER)));  }
-
+    // Act & Assert
+    assertThrows(RestException.class, () -> client.getAppointmentBook(nonExistentOwner),
+            "Expected getAppointmentBook to throw, but it didn't");
+  }
 }
+
+

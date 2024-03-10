@@ -11,7 +11,7 @@ public class Messages
         return String.format("The required parameter \"%s\" is missing", parameterName);
     }
 
-    public static String definedWordAs(String owner, String description )
+    public static String definedWordAs(String owner, String description)
     {
         return String.format( "Created new appointment in book for %s: %s", owner, description );
     }

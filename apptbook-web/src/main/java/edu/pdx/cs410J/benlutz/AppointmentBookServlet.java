@@ -7,7 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -20,6 +24,8 @@ public class AppointmentBookServlet extends HttpServlet
 {
     static final String OWNER_PARAMETER = "owner";
     static final String DESCRIPTION_PARAMETER = "description";
+    static final String BEGIN_PARAMETER = "begin time";
+    static final String END_PARAMETER = "end time";
 
     private final Map<String, AppointmentBook> appointmentBooks = new HashMap<>();
 
@@ -30,18 +36,59 @@ public class AppointmentBookServlet extends HttpServlet
      * are written to the HTTP response.
      */
     @Override
-    protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws IOException
-    {
-        response.setContentType( "text/plain" );
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/plain");
 
-        String owner = getParameter(OWNER_PARAMETER, request );
-        if (owner != null) {
-            //Used to be writeDefinition
-            writeAppointmentBook(owner, response);
+        String owner = getParameter(OWNER_PARAMETER, request);
+        String beginTimeString = getParameter(BEGIN_PARAMETER, request);
+        String endTimeString = getParameter(END_PARAMETER, request);
 
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        if (owner == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing required parameter: " + OWNER_PARAMETER);
+            return;
         }
+
+        AppointmentBook book = appointmentBooks.get(owner);
+        if (book == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No appointment book found for owner: " + owner);
+            return;
+        }
+
+        PrintWriter pw = response.getWriter();
+        TextDumper dumper = new TextDumper(pw);
+
+        if (beginTimeString != null && endTimeString != null) {
+            // Both begin and end time parameters are provided, filter appointments
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV").withLocale(Locale.US);
+                ZonedDateTime beginTime = ZonedDateTime.parse(beginTimeString, formatter);
+                ZonedDateTime endTime = ZonedDateTime.parse(endTimeString, formatter);
+
+                AppointmentBook filteredBook = new AppointmentBook(owner);
+                for (Appointment appointment : book.getAppointments()) {
+                    if (!appointment.getBeginTime().isBefore(beginTime) && !appointment.getEndTime().isAfter(endTime)) {
+                        filteredBook.addAppointment(appointment);
+                    }
+                }
+
+                if (filteredBook.getAppointments().isEmpty()) {
+                    pw.println("No appointments found between the specified times for owner: " + owner);
+                } else {
+                    dumper.dump(filteredBook);
+                }
+            } catch (DateTimeParseException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid date/time format for begin or end time");
+                return;
+            } catch (invalidOwnerException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            // No begin and end time parameters are provided, return all appointments for the owner
+            dumper.dump(book);
+        }
+
+        pw.flush();
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     /**
@@ -66,7 +113,29 @@ public class AppointmentBookServlet extends HttpServlet
             return;
         }
 
-        addAppointmentToBook(owner, description);
+        String beginTimeString = getParameter(BEGIN_PARAMETER, request);
+        if (beginTimeString == null) {
+            missingRequiredParameter(response, BEGIN_PARAMETER);
+            return;
+        }
+
+        String endTimeString = getParameter(END_PARAMETER, request);
+        if (endTimeString == null) {
+            missingRequiredParameter(response, END_PARAMETER);
+            return;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV").withLocale(Locale.US);
+        ZonedDateTime beginTime;
+        ZonedDateTime endTime;
+        try {
+            beginTime = ZonedDateTime.parse(beginTimeString, formatter);
+            endTime = ZonedDateTime.parse(endTimeString, formatter);
+        } catch (DateTimeParseException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to parse date/time: " + e.getMessage());
+            return;
+        }
+        addAppointmentToBook(owner, description, beginTime, endTime);
 
         PrintWriter pw = response.getWriter();
         pw.println(Messages.definedWordAs(owner, description));
@@ -75,7 +144,7 @@ public class AppointmentBookServlet extends HttpServlet
         response.setStatus( HttpServletResponse.SC_OK);
     }
 
-    private void addAppointmentToBook(String owner, String description) {
+    private void addAppointmentToBook(String owner, String description, ZonedDateTime beginTime, ZonedDateTime endTime) {
         try {
             AppointmentBook appointmentBook = this.appointmentBooks.computeIfAbsent(owner, k -> {
                 try {
@@ -86,8 +155,8 @@ public class AppointmentBookServlet extends HttpServlet
                     throw new RuntimeException("Invalid owner: " + owner, e);
                 }
             });
-            appointmentBook.addAppointment(new Appointment(description));
-        } catch (RuntimeException e) {
+            appointmentBook.addAppointment(new Appointment(description, beginTime, endTime));
+        } catch (RuntimeException | invalidDescriptionException e) {
             // Handle or log the exception as needed
             System.err.println("Exception when adding an appointment: " + e.getMessage());
         }

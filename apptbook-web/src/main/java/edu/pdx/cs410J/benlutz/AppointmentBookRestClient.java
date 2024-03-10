@@ -6,30 +6,21 @@ import edu.pdx.cs410J.web.HttpRequestHelper;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static edu.pdx.cs410J.web.HttpRequestHelper.Response;
 import static edu.pdx.cs410J.web.HttpRequestHelper.RestException;
 import static java.net.HttpURLConnection.HTTP_OK;
 
-/**
- * A helper class for accessing the rest client.  Note that this class provides
- * an example of how to make gets and posts to a URL.  You'll need to change it
- * to do something other than just send dictionary entries.
- */
 public class AppointmentBookRestClient {
   private static final String WEB_APP = "apptbook";
   private static final String SERVLET = "appointments";
+  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");
 
   private final HttpRequestHelper http;
 
-
-  /**
-   * Creates a client to the appointment book REST service running on the given host and port
-   *
-   * @param hostName The name of the host
-   * @param port     The port
-   */
   public AppointmentBookRestClient(String hostName, int port) {
     this(new HttpRequestHelper(String.format("http://%s:%d/%s/%s", hostName, port, WEB_APP, SERVLET)));
   }
@@ -39,20 +30,6 @@ public class AppointmentBookRestClient {
     this.http = http;
   }
 
-  /**
-   * Returns all dictionary entries from the server
-   */
-  public AppointmentBook getAllDictionaryEntries() throws IOException, ParserException {
-    Response response = http.get(Map.of());
-    throwExceptionIfNotOkayHttpStatus(response);
-
-    TextParser parser = new TextParser(new StringReader(response.getContent()));
-    return null;
-  }
-
-  /**
-   * Returns the definition for the given word
-   */
   public AppointmentBook getAppointmentBook(String owner) throws IOException, ParserException {
     Response response = http.get(Map.of(AppointmentBookServlet.OWNER_PARAMETER, owner));
     throwExceptionIfNotOkayHttpStatus(response);
@@ -62,9 +39,31 @@ public class AppointmentBookRestClient {
     return parser.parse();
   }
 
+  public AppointmentBook getAppointmentsBetween(String owner, ZonedDateTime begin, ZonedDateTime end) throws IOException, ParserException {
+    Map<String, String> parameters = Map.of(
+            AppointmentBookServlet.OWNER_PARAMETER, owner,
+            AppointmentBookServlet.BEGIN_PARAMETER, begin.format(DATE_TIME_FORMAT),
+            AppointmentBookServlet.END_PARAMETER, end.format(DATE_TIME_FORMAT)
+    );
+
+    Response response = http.get(parameters);
+    throwExceptionIfNotOkayHttpStatus(response);
+    String content = response.getContent();
+
+    TextParser parser = new TextParser(new StringReader(content));
+    return parser.parse();
+  }
+
   public void addAppointment(String owner, Appointment appointment) throws IOException {
     String description = appointment.getDescription();
-    Response response = postToMyURL(Map.of(AppointmentBookServlet.OWNER_PARAMETER, owner, AppointmentBookServlet.DESCRIPTION_PARAMETER, description));
+    ZonedDateTime beginTime = appointment.getBeginTime();
+    ZonedDateTime endTime = appointment.getEndTime();
+    Response response = postToMyURL(Map.of(
+            AppointmentBookServlet.OWNER_PARAMETER, owner,
+            AppointmentBookServlet.DESCRIPTION_PARAMETER, description,
+            AppointmentBookServlet.BEGIN_PARAMETER, beginTime.format(DATE_TIME_FORMAT),
+            AppointmentBookServlet.END_PARAMETER, endTime.format(DATE_TIME_FORMAT)
+    ));
     throwExceptionIfNotOkayHttpStatus(response);
   }
 
@@ -85,5 +84,4 @@ public class AppointmentBookRestClient {
       throw new RestException(code, message);
     }
   }
-
 }
