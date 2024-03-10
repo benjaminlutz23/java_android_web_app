@@ -12,6 +12,9 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -28,19 +31,28 @@ public class AppointmentBookRestClientTest {
     appointmentBook.addAppointment(new Appointment(description, beginTime, endTime));
 
     HttpRequestHelper http = mock(HttpRequestHelper.class);
-    when(http.get(eq(Map.of()))).thenReturn(appointmentBookAsText(appointmentBook));
+    HttpRequestHelper.Response mockedResponse = mock(HttpRequestHelper.Response.class);
+
+    // Setup mock to return expected text content and HTTP status code
+    when(mockedResponse.getContent()).thenReturn(appointmentBookAsText(appointmentBook));
+    when(mockedResponse.getHttpStatusCode()).thenReturn(200); // Simulate OK response
+
+    // Configure http.get() to return the mocked response
+    when(http.get(anyMap())).thenReturn(mockedResponse);
 
     AppointmentBookRestClient client = new AppointmentBookRestClient(http);
 
-    AppointmentBook appointmentBook2 = client.getAppointmentBook(owner);
-    assertThat(appointmentBook2.getOwnerName(), equalTo(owner));
-    assertThat(appointmentBook2.getAppointments().iterator().next().getDescription(), equalTo(description));
+    // Execute test
+    AppointmentBook retrievedAppointmentBook = client.getAppointmentBook(owner);
+    assertNotNull(retrievedAppointmentBook);
+    assertEquals(owner, retrievedAppointmentBook.getOwnerName());
+    assertEquals(description, retrievedAppointmentBook.getAppointments().iterator().next().getDescription());
   }
 
-  private HttpRequestHelper.Response appointmentBookAsText(AppointmentBook appointmentBook) {
+  private String appointmentBookAsText(AppointmentBook appointmentBook) {
     StringWriter writer = new StringWriter();
     new TextDumper(writer).dump(appointmentBook);
-
-    return new HttpRequestHelper.Response(writer.toString());
+    return writer.toString();
   }
+
 }

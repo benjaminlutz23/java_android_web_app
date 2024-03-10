@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 /**
  * The main class that parses the command line and communicates with the
@@ -26,70 +27,99 @@ public class Project5 {
             return;
         }
 
+
+
+
         boolean printFlag = false;
         boolean searchFlag = false;
+        boolean invalidOptionFlag = false;
         String hostName = null;
         String portString = null;
         String owner = null;
         String description = null;
-        String beginDateTimeString = null;
-        String endDateTimeString = null;
+        String beginDate = null;
+        String endDate = null;
+        String beginTime = null;
+        String endTime = null;
+        String beginZoneID = null;
+        String endZoneID = null;
+        int argCounter = 0;
+
         ZonedDateTime beginDateTime = null;
         ZonedDateTime endDateTime = null;
 
+
+        // Command line parsing logic
         for (int i = 0; i < args.length; i++) {
-            switch (args[i]) {
-                case "-print":
-                    printFlag = true;
-                    break;
-                case "-search":
-                    searchFlag = true;
-                    break;
-                case "-README":
-                    printReadme();
-                    return;
-                case "-host":
-                    if (i + 1 < args.length) {
-                        hostName = args[++i];
-                    } else {
-                        error("Error: -host requires a hostname");
+            String arg = args[i];
+            if (arg.startsWith("-")) {
+                switch (arg) {
+                    case "-print":
+                        printFlag = true;
+                        break;
+                    case "-search":
+                        searchFlag = true;
+                        break;
+                    case "-README":
+                        printReadme();
                         return;
-                    }
-                    break;
-                case "-port":
-                    if (i + 1 < args.length) {
-                        portString = args[++i];
-                    } else {
-                        error("Error: -port requires a port number");
-                        return;
-                    }
-                    break;
-                default:
-                    if (owner == null) {
-                        owner = args[i];
-                    } else if (description == null && !searchFlag) {
-                        description = args[i];
-                    } else if (beginDateTimeString == null) {
-                        beginDateTimeString = args[i];
-                        if (i + 2 < args.length) {
-                            beginDateTimeString += " " + args[++i] + " " + args[++i];
+                    case "-host":
+                        // Ensure there is another argument after "-host"
+                        if (i + 1 < args.length) {
+                            hostName = args[i + 1];
+                            i++; // Skip the next argument since it's used as the fileName
                         } else {
-                            error("Incomplete date/time for the beginning of the appointment");
+                            // Handle the case where "-textFile" is the last argument without a following file name
+                            System.err.println("Error: -host option requires an argument");
                             return;
                         }
-                    } else if (endDateTimeString == null) {
-                        endDateTimeString = args[i];
-                        if (i + 2 < args.length) {
-                            endDateTimeString += " " + args[++i] + " " + args[++i];
+                        break;
+                    case "-port":
+                        // Ensure there is another argument after "-port"
+                        if (i + 1 < args.length) {
+                            portString = args[i + 1];
+                            i++; // Skip the next argument since it's used as the string
                         } else {
-                            error("Incomplete date/time for the end of the appointment");
+                            // Handle the case where "-xmlFile" is the last argument without a following file name
+                            System.err.println("Error: -port option requires an argument");
                             return;
                         }
-                    } else {
-                        error("Unexpected argument: " + args[i]);
-                        return;
-                    }
-                    break;
+                        break;
+                    default:
+                        invalidOptionFlag = true;
+                }
+            } else {
+                switch (argCounter) {
+                    case 0:
+                        owner = arg;
+                        break;
+                    case 1:
+                        description = arg;
+                        break;
+                    case 2:
+                        beginDate = arg;
+                        break;
+                    case 3:
+                        beginTime = args[i] + " " + args[i+1];
+                        i++;
+                        break;
+                    case 4:
+                        beginZoneID = arg;
+                        break;
+                    case 5:
+                        endDate = arg;
+                        break;
+                    case 6:
+                        endTime = args[i] + " " + args[i+1];
+                        i++;
+                        break;
+                    case 7:
+                        endZoneID = arg;
+                        break;
+                    default:
+                        System.err.println("Too many arguments.");
+                }
+                argCounter++;
             }
         }
 
@@ -111,38 +141,41 @@ public class Project5 {
             return;
         }
 
-        if (beginDateTimeString != null && endDateTimeString != null) {
+        // Parse the begin time into ZonedDateTime
+        if (!searchFlag) {
             try {
-                beginDateTime = ZonedDateTime.parse(beginDateTimeString, DATE_TIME_FORMAT);
-                endDateTime = ZonedDateTime.parse(endDateTimeString, DATE_TIME_FORMAT);
+                beginDateTime = ZonedDateTime.parse(beginDate + " " + beginTime + " " + beginZoneID, DATE_TIME_FORMAT);
             } catch (DateTimeParseException e) {
-                System.err.println("Error parsing date and time: " + e.getMessage());
+                System.err.println("Invalid begin date/time format: " + e.getMessage());
+                return;
+            }
+
+            // Parse the end time into ZonedDateTime
+            try {
+                endDateTime = ZonedDateTime.parse(endDate + " " + endTime + " " + endZoneID, DATE_TIME_FORMAT);
+            } catch (DateTimeParseException e) {
+                System.err.println("Invalid end date/time format: " + e.getMessage());
                 return;
             }
         }
 
         AppointmentBookRestClient client = new AppointmentBookRestClient(hostName, port);
 
-        String message = "hello";
+        String message = "";
         try {
             if (searchFlag) {
-                if (beginDateTime != null && endDateTime != null) {
-                    // Search for appointments between two times
-                    AppointmentBook book = client.getAppointmentsBetween(owner, beginDateTime, endDateTime);
+                // Search for appointments between two times
+                AppointmentBook book = client.getAppointmentsBetween(owner, beginDateTime, endDateTime);
 
-                    // Pretty print the result
-                    PrintWriter writer = null;
-                    writer = new PrintWriter(System.out, true);
-                    PrettyPrinter prettyPrinter = new PrettyPrinter(writer);
-                    prettyPrinter.dump(book);
+                // Pretty print the result
+                PrintWriter writer = null;
+                writer = new PrintWriter(System.out, true);
+                PrettyPrinter prettyPrinter = new PrettyPrinter(writer);
+                prettyPrinter.dump(book);
 
-                } else {
-                    System.err.println("Error: Search requires both begin and end date/time");
-                    return;
-                }
             } else {
                 // Add an appointment or other actions
-                if (description != null && beginDateTime != null && endDateTime != null) {
+                if (description != null) {
                     Appointment appointment = new Appointment(description, beginDateTime, endDateTime);
                     client.addAppointment(owner, appointment);
                     if (printFlag) {

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 
 
@@ -18,7 +19,10 @@ import java.time.format.DateTimeParseException;
  */
 public class TextParser implements AppointmentBookParser<AppointmentBook> {
   private final Reader reader;
-  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");
+  private static final DateTimeFormatter DATE_TIME_FORMATTER = new DateTimeFormatterBuilder()
+          .parseCaseInsensitive()
+          .appendPattern("M/d/yyyy h:mm a VV")
+          .toFormatter();
 
 
   /**

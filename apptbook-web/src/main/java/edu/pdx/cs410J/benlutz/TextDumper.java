@@ -5,6 +5,7 @@ import edu.pdx.cs410J.AppointmentBookDumper;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Collection;
 
 /**
@@ -12,7 +13,10 @@ import java.util.Collection;
  */
 public class TextDumper implements AppointmentBookDumper<AppointmentBook> {
   private final Writer writer;
-  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");
+  private static final DateTimeFormatter DATE_TIME_FORMATTER = new DateTimeFormatterBuilder()
+          .parseCaseInsensitive()
+          .appendPattern("M/d/yyyy h:mm a VV")
+          .toFormatter();
 
   /**
    * Constructs a new TextDumper that writes to a specified {@link Writer}

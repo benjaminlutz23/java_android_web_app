@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.HashMap;
 import java.util.Map;
 
 import static edu.pdx.cs410J.web.HttpRequestHelper.Response;
@@ -17,7 +19,10 @@ import static java.net.HttpURLConnection.HTTP_OK;
 public class AppointmentBookRestClient {
   private static final String WEB_APP = "apptbook";
   private static final String SERVLET = "appointments";
-  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");
+  private static final DateTimeFormatter DATE_TIME_FORMAT = new DateTimeFormatterBuilder()
+          .parseCaseInsensitive()
+          .appendPattern("M/d/yyyy h:mm a VV")
+          .toFormatter();
 
   private final HttpRequestHelper http;
 
@@ -40,11 +45,14 @@ public class AppointmentBookRestClient {
   }
 
   public AppointmentBook getAppointmentsBetween(String owner, ZonedDateTime begin, ZonedDateTime end) throws IOException, ParserException {
-    Map<String, String> parameters = Map.of(
-            AppointmentBookServlet.OWNER_PARAMETER, owner,
-            AppointmentBookServlet.BEGIN_PARAMETER, begin.format(DATE_TIME_FORMAT),
-            AppointmentBookServlet.END_PARAMETER, end.format(DATE_TIME_FORMAT)
-    );
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put(AppointmentBookServlet.OWNER_PARAMETER, owner);
+
+    // Only add begin and end parameters if they are not null
+    if (begin != null && end != null) {
+      parameters.put(AppointmentBookServlet.BEGIN_PARAMETER, begin.format(DATE_TIME_FORMAT));
+      parameters.put(AppointmentBookServlet.END_PARAMETER, end.format(DATE_TIME_FORMAT));
+    }
 
     Response response = http.get(parameters);
     throwExceptionIfNotOkayHttpStatus(response);
@@ -53,6 +61,7 @@ public class AppointmentBookRestClient {
     TextParser parser = new TextParser(new StringReader(content));
     return parser.parse();
   }
+
 
   public void addAppointment(String owner, Appointment appointment) throws IOException {
     String description = appointment.getDescription();

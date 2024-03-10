@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,6 +29,10 @@ public class AppointmentBookServlet extends HttpServlet
     static final String END_PARAMETER = "end time";
 
     private final Map<String, AppointmentBook> appointmentBooks = new HashMap<>();
+    private static final DateTimeFormatter DATE_TIME_FORMAT = new DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .appendPattern("M/d/yyyy h:mm a VV")
+            .toFormatter();
 
     /**
      * Handles an HTTP GET request from a client by writing the definition of the
@@ -60,13 +65,12 @@ public class AppointmentBookServlet extends HttpServlet
         if (beginTimeString != null && endTimeString != null) {
             // Both begin and end time parameters are provided, filter appointments
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV").withLocale(Locale.US);
-                ZonedDateTime beginTime = ZonedDateTime.parse(beginTimeString, formatter);
-                ZonedDateTime endTime = ZonedDateTime.parse(endTimeString, formatter);
+                ZonedDateTime beginTime = ZonedDateTime.parse(beginTimeString, DATE_TIME_FORMAT);
+                ZonedDateTime endTime = ZonedDateTime.parse(endTimeString, DATE_TIME_FORMAT);
 
                 AppointmentBook filteredBook = new AppointmentBook(owner);
                 for (Appointment appointment : book.getAppointments()) {
-                    if (!appointment.getBeginTime().isBefore(beginTime) && !appointment.getEndTime().isAfter(endTime)) {
+                    if (appointment.getBeginTime().isBefore(endTime) && appointment.getEndTime().isAfter(beginTime)) {
                         filteredBook.addAppointment(appointment);
                     }
                 }
@@ -125,12 +129,11 @@ public class AppointmentBookServlet extends HttpServlet
             return;
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV").withLocale(Locale.US);
         ZonedDateTime beginTime;
         ZonedDateTime endTime;
         try {
-            beginTime = ZonedDateTime.parse(beginTimeString, formatter);
-            endTime = ZonedDateTime.parse(endTimeString, formatter);
+            beginTime = ZonedDateTime.parse(beginTimeString, DATE_TIME_FORMAT);
+            endTime = ZonedDateTime.parse(endTimeString, DATE_TIME_FORMAT);
         } catch (DateTimeParseException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to parse date/time: " + e.getMessage());
             return;
