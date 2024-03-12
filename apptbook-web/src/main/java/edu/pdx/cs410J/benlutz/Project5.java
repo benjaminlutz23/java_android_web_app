@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class Project5 {
 
-    public static final String MISSING_ARGS = "Missing command line arguments";
+    public static final String MISSING_ARGS = "Error: No command line arguments";
     private static final DateTimeFormatter DATE_TIME_FORMAT = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .appendPattern("M/d/yyyy h:mm a VV")
@@ -27,7 +27,10 @@ public class Project5 {
             return;
         }
 
-
+        if (args.length > 16) {
+            System.err.println("Too many command line arguments");
+            return;
+        }
 
 
         boolean printFlag = false;
@@ -123,6 +126,18 @@ public class Project5 {
             }
         }
 
+        // Check for invalid options
+        if (invalidOptionFlag) {
+            System.err.println("Error: Invalid command line option");
+            return;
+        }
+
+        // Check for missing end time
+        if (endDate == null || endTime == null) {
+            System.err.println("Error: Missing end time");
+        }
+
+
         if (hostName == null) {
             usage( MISSING_ARGS );
             return;
@@ -156,6 +171,12 @@ public class Project5 {
             } catch (DateTimeParseException e) {
                 System.err.println("Invalid end date/time format: " + e.getMessage());
                 return;
+            }
+
+            // Check if the begin time is after the end time
+            if (beginDateTime.isAfter(endDateTime)) {
+                System.err.println("Error: The begin time must be before the end time.");
+                return; // Exit the program
             }
         }
 
