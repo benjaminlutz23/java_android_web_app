@@ -73,7 +73,7 @@ public class AppointmentBookRestClient {
    * @throws IOException      If an I/O error occurs during the request.
    * @throws ParserException If parsing the server's response fails.
    */
-  public AppointmentBook getAppointmentsBetween(String owner, ZonedDateTime begin, ZonedDateTime end) throws IOException, ParserException {
+  public AppointmentBook getAppointmentsBetween(String owner, ZonedDateTime begin, ZonedDateTime end) throws IOException, ParserException, invalidOwnerException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put(AppointmentBookServlet.OWNER_PARAMETER, owner);
 
@@ -88,6 +88,7 @@ public class AppointmentBookRestClient {
     String content = response.getContent();
 
     TextParser parser = new TextParser(new StringReader(content));
+
     return parser.parse();
   }
 

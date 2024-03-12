@@ -133,7 +133,7 @@ public class Project5 {
         }
 
         // Check for missing end time
-        if (endDate == null || endTime == null) {
+        if (!searchFlag && (endDate == null || endTime == null)) {
             System.err.println("Error: Missing end time");
         }
 
@@ -157,7 +157,9 @@ public class Project5 {
         }
 
         // Parse the begin time into ZonedDateTime
-        if (!searchFlag) {
+        boolean nonNullDateTime = beginDate != null && endDate != null && beginTime != null && endTime != null && beginZoneID != null && endZoneID != null;
+
+        if (!searchFlag || (searchFlag && nonNullDateTime)) {
             try {
                 beginDateTime = ZonedDateTime.parse(beginDate + " " + beginTime + " " + beginZoneID, DATE_TIME_FORMAT);
             } catch (DateTimeParseException e) {
@@ -187,13 +189,25 @@ public class Project5 {
             if (searchFlag) {
                 // Search for appointments between two times
                 AppointmentBook book = client.getAppointmentsBetween(owner, beginDateTime, endDateTime);
+                AppointmentBook filteredBook = new AppointmentBook(owner);
 
                 // Pretty print the result
                 PrintWriter writer = null;
                 writer = new PrintWriter(System.out, true);
                 PrettyPrinter prettyPrinter = new PrettyPrinter(writer);
-                prettyPrinter.dump(book);
 
+                if (nonNullDateTime) {
+                    for (Appointment appointment : book.getAppointments()) {
+                        // Check if the entire appointment is between the begin and end times
+                        if (!appointment.getBeginTime().isBefore(beginDateTime) && !appointment.getEndTime().isAfter(endDateTime)) {
+                            filteredBook.addAppointment(appointment);
+                        }
+                    }
+                    prettyPrinter.dump(filteredBook);
+                }
+                else {
+                    prettyPrinter.dump(book);
+                }
             } else {
                 // Add an appointment or other actions
                 if (description != null) {
@@ -211,7 +225,7 @@ public class Project5 {
         } catch (IOException | ParserException e) {
             System.err.println("Error communicating with server: " + e.getMessage());
             return;
-        } catch (invalidDescriptionException e) {
+        } catch (invalidDescriptionException | invalidOwnerException e) {
             throw new RuntimeException(e);
         }
         System.out.println(message);
