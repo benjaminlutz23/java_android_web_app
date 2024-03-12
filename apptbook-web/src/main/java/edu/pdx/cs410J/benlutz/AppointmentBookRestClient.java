@@ -16,6 +16,11 @@ import static edu.pdx.cs410J.web.HttpRequestHelper.Response;
 import static edu.pdx.cs410J.web.HttpRequestHelper.RestException;
 import static java.net.HttpURLConnection.HTTP_OK;
 
+/**
+ * Provides REST client functionalities for managing {@link AppointmentBook} objects.
+ * This class enables operations such as retrieving, adding, and searching for appointments
+ * through HTTP requests to a server.
+ */
 public class AppointmentBookRestClient {
   private static final String WEB_APP = "apptbook";
   private static final String SERVLET = "appointments";
@@ -26,6 +31,12 @@ public class AppointmentBookRestClient {
 
   private final HttpRequestHelper http;
 
+  /**
+   * Constructs an {@link AppointmentBookRestClient} for accessing the appointment book REST service.
+   *
+   * @param hostName The hostname of the server providing the REST service.
+   * @param port     The port on which the server is listening.
+   */
   public AppointmentBookRestClient(String hostName, int port) {
     this(new HttpRequestHelper(String.format("http://%s:%d/%s/%s", hostName, port, WEB_APP, SERVLET)));
   }
@@ -35,6 +46,14 @@ public class AppointmentBookRestClient {
     this.http = http;
   }
 
+  /**
+   * Retrieves an {@link AppointmentBook} for a given owner from the server.
+   *
+   * @param owner The owner whose appointment book is to be retrieved.
+   * @return The {@link AppointmentBook} of the specified owner.
+   * @throws IOException      If an I/O error occurs during the request.
+   * @throws ParserException If parsing the server's response fails.
+   */
   public AppointmentBook getAppointmentBook(String owner) throws IOException, ParserException {
     Response response = http.get(Map.of(AppointmentBookServlet.OWNER_PARAMETER, owner));
     throwExceptionIfNotOkayHttpStatus(response);
@@ -44,6 +63,16 @@ public class AppointmentBookRestClient {
     return parser.parse();
   }
 
+  /**
+   * Retrieves appointments between specified begin and end times for a given owner from the server.
+   *
+   * @param owner The owner whose appointments are to be retrieved.
+   * @param begin The start time of the interval for which appointments are sought.
+   * @param end   The end time of the interval for which appointments are sought.
+   * @return An {@link AppointmentBook} containing appointments within the specified interval.
+   * @throws IOException      If an I/O error occurs during the request.
+   * @throws ParserException If parsing the server's response fails.
+   */
   public AppointmentBook getAppointmentsBetween(String owner, ZonedDateTime begin, ZonedDateTime end) throws IOException, ParserException {
     Map<String, String> parameters = new HashMap<>();
     parameters.put(AppointmentBookServlet.OWNER_PARAMETER, owner);
@@ -62,7 +91,13 @@ public class AppointmentBookRestClient {
     return parser.parse();
   }
 
-
+  /**
+   * Adds an appointment to the appointment book of a specified owner on the server.
+   *
+   * @param owner       The owner of the appointment book to which the appointment will be added.
+   * @param appointment The appointment to be added.
+   * @throws IOException If an I/O error occurs during the request.
+   */
   public void addAppointment(String owner, Appointment appointment) throws IOException {
     String description = appointment.getDescription();
     ZonedDateTime beginTime = appointment.getBeginTime();
@@ -76,16 +111,35 @@ public class AppointmentBookRestClient {
     throwExceptionIfNotOkayHttpStatus(response);
   }
 
+  /**
+   * Sends a POST request with the given dictionary entries to the server.
+   * This method is primarily used for testing and internal purposes.
+   *
+   * @param dictionaryEntries The entries to be sent in the POST request.
+   * @return The response from the server.
+   * @throws IOException If an I/O error occurs during the request.
+   */
   @VisibleForTesting
   Response postToMyURL(Map<String, String> dictionaryEntries) throws IOException {
     return http.post(dictionaryEntries);
   }
 
+  /**
+   * Removes all appointment books from the server. This functionality is intended
+   * for testing and should be used with caution.
+   *
+   * @throws IOException If an I/O error occurs during the request.
+   */
   public void removeAllAppointmentBooks() throws IOException {
     Response response = http.delete(Map.of());
     throwExceptionIfNotOkayHttpStatus(response);
   }
 
+  /**
+   * Checks the HTTP status code of the server's response and throws an exception if it is not OK (200).
+   *
+   * @param response The response from the server.
+   */
   private void throwExceptionIfNotOkayHttpStatus(Response response) {
     int code = response.getHttpStatusCode();
     if (code != HTTP_OK) {

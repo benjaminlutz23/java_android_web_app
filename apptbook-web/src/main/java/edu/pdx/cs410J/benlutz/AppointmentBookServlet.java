@@ -147,6 +147,16 @@ public class AppointmentBookServlet extends HttpServlet
         response.setStatus( HttpServletResponse.SC_OK);
     }
 
+    /**
+     * Adds a given appointment to the owner's appointment book. If the appointment book
+     * does not exist for the given owner, it is created. Handles exceptions related to
+     * invalid appointment descriptions or owner names.
+     *
+     * @param owner       The owner of the appointment book.
+     * @param description The description of the appointment.
+     * @param beginTime   The ZonedDateTime object representing the start time of the appointment.
+     * @param endTime     The ZonedDateTime object representing the end time of the appointment.
+     */
     private void addAppointmentToBook(String owner, String description, ZonedDateTime beginTime, ZonedDateTime endTime) {
         try {
             AppointmentBook appointmentBook = this.appointmentBooks.computeIfAbsent(owner, k -> {
