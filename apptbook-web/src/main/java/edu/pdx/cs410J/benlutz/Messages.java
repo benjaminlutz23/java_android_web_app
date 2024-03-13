@@ -11,6 +11,7 @@ public class Messages
         return String.format("The required parameter \"%s\" is missing", parameterName);
     }
 
+<<<<<<< HEAD
     public static String createdAppointment(String owner, String description )
     {
         return String.format( "Created new Appointment in Book for %s: %s", owner, description );
@@ -18,6 +19,15 @@ public class Messages
 
     public static String allAppointmentBooksDeleted() {
         return "All dictionary entries have been deleted";
+=======
+    public static String definedWordAs(String owner, String description)
+    {
+        return String.format( "Created new appointment in book for %s: %s", owner, description );
+    }
+
+    public static String allAppointmentBooksDeleted() {
+        return "All AppointmentBooks have been deleted";
+>>>>>>> Fresh-Start
     }
 
 }

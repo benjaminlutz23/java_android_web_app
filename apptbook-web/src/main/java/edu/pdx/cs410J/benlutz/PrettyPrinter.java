@@ -1,5 +1,9 @@
 package edu.pdx.cs410J.benlutz;
 
+<<<<<<< HEAD
+=======
+import com.google.common.annotations.VisibleForTesting;
+>>>>>>> Fresh-Start
 import edu.pdx.cs410J.AppointmentBookDumper;
 
 import java.io.PrintWriter;
@@ -30,6 +34,14 @@ public class PrettyPrinter implements AppointmentBookDumper<AppointmentBook> {
         this.writer = writer;
     }
 
+<<<<<<< HEAD
+=======
+    @VisibleForTesting
+    public static String formatAppointmentDescription(String owner, String description) {
+        return owner + " " + description;
+    }
+
+>>>>>>> Fresh-Start
     /**
      * Dumps an {@link AppointmentBook} to a text format using the writer provided
      * <p>

@@ -44,7 +44,11 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
     this.endTime = endTime;
   }
 
+<<<<<<< HEAD
   /**
+=======
+    /**
+>>>>>>> Fresh-Start
    * Retrieves the start time of the appointment
    *
    * @return null because we're not using it
