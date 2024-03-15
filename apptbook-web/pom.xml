@@ -108,7 +108,7 @@
               <addClasspath>true</addClasspath>
               <classpathLayoutType>repository</classpathLayoutType>
               <classpathPrefix>file:///${localRepositoryWithEscapedSpaces}</classpathPrefix>
-<<<<<<< HEAD
+
               <mainClass>edu.pdx.cs410J.benlutz.Project4</mainClass>
 =======
               <mainClass>edu.pdx.cs410J.benlutz.Project5</mainClass>
@@ -127,9 +127,6 @@
   <profiles>
     <profile>
       <id>grader</id>
-      <activation>
-        <activeByDefault>${grader}</activeByDefault>
-      </activation>
       <build>
         <plugins>
           <plugin>
