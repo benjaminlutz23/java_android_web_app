@@ -18,6 +18,11 @@ import edu.pdx.cs410J.benlutz.databinding.ActivityMainBinding;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
@@ -73,5 +78,26 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    /**
+     * Gets the contents of the README
+     * <p>
+     * This method reads the README information from a text file and returns it as a string
+     */
+    private static void printReadme() {
+        try (InputStream readmeStream = MainActivity.class.getResourceAsStream("README.txt")) {
+            assert readmeStream != null;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(readmeStream))) {
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading README file: " + e.getMessage());
+        }
     }
 }
