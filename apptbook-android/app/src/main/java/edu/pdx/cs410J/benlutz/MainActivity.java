@@ -1,22 +1,19 @@
 package edu.pdx.cs410J.benlutz;
 
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import edu.pdx.cs410J.benlutz.databinding.ActivityMainBinding;
+import com.google.android.material.snackbar.Snackbar;
 
-import android.view.Menu;
-import android.view.MenuItem;
+import edu.pdx.cs410J.benlutz.databinding.ActivityMainBinding;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,63 +38,35 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
+        binding.fab.setOnClickListener(view -> {
+            String readmeText = readReadmeText();
+            if (!readmeText.isEmpty()) {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("README")
+                        .setMessage(readmeText)
+                        .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
+                        .show();
+            } else {
+                Toast.makeText(MainActivity.this, "Failed to load README", Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
-
     /**
-     * Gets the contents of the README
-     * <p>
-     * This method reads the README information from a text file and returns it as a string
+     * Reads the contents of the README file from the assets folder and returns it as a string.
      */
-    private static void printReadme() {
-        try (InputStream readmeStream = MainActivity.class.getResourceAsStream("README.txt")) {
-            assert readmeStream != null;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(readmeStream))) {
+    private String readReadmeText() {
+        StringBuilder readmeText = new StringBuilder();
+        try (InputStream readmeStream = this.getAssets().open("README.txt");
+             BufferedReader reader = new BufferedReader(new InputStreamReader(readmeStream))) {
 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-
+            String line;
+            while ((line = reader.readLine()) != null) {
+                readmeText.append(line).append('\n');
             }
         } catch (IOException e) {
             System.err.println("Error reading README file: " + e.getMessage());
         }
+        return readmeText.toString();
     }
 }
