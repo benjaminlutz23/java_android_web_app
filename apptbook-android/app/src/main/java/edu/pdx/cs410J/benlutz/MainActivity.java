@@ -8,10 +8,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.google.android.material.snackbar.Snackbar;
 
 import edu.pdx.cs410J.benlutz.databinding.ActivityMainBinding;
 
@@ -22,7 +18,6 @@ import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
     @Override
@@ -32,11 +27,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setSupportActionBar(binding.toolbar);
+        // This line is removed or commented out since the toolbar is no longer in the layout
+        // setSupportActionBar(binding.toolbar);
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        // If you are not using the AppBarConfiguration and NavigationUI with a toolbar,
+        // you might want to adjust or remove the related code.
 
         binding.fab.setOnClickListener(view -> {
             String readmeText = readReadmeText();
@@ -52,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Reads the contents of the README file from the assets folder and returns it as a string.
-     */
     private String readReadmeText() {
         StringBuilder readmeText = new StringBuilder();
         try (InputStream readmeStream = this.getAssets().open("README.txt");
