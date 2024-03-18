@@ -55,4 +55,8 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="search_owner_name">Search Owner Name</string>
+    <string name="search">Search</string>
+    <string name="owner_name">Owner Name</string>
+    <string name="search_appointment_by_owner">Search Appointment by Owner</string>
 </resources>
