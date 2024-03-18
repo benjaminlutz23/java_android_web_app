@@ -18,21 +18,14 @@ import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        edu.pdx.cs410J.benlutz.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // This line is removed or commented out since the toolbar is no longer in the layout
-        // setSupportActionBar(binding.toolbar);
-
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        // If you are not using the AppBarConfiguration and NavigationUI with a toolbar,
-        // you might want to adjust or remove the related code.
 
         binding.fab.setOnClickListener(view -> {
             String readmeText = readReadmeText();

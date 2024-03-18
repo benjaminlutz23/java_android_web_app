@@ -70,6 +70,11 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.403" />
 
+        <Spinner
+            android:id="@+id/timeZoneSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="54dp" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -101,6 +106,7 @@
         android:layout_height="150dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -108,10 +114,19 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
         app:layout_constraintVertical_bias="0.0">
 
-        <Spinner
-            android:id="@+id/timeZoneSpinner"
+        <Button
+            android:id="@+id/saveButton"
             android:layout_width="match_parent"
-            android:layout_height="54dp" />
+            android:layout_height="wrap_content"
+            android:insetLeft="10dp"
+            android:insetRight="10dp"
+            android:text="@string/save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timeZoneSpinner"
+            app:layout_constraintVertical_bias="0.1" />
+
     </LinearLayout>
 
     <!-- Existing elements -->
