@@ -2,20 +2,21 @@ package edu.pdx.cs410J.benlutz;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.EditText;
-import android.content.Context;
-import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+
+import com.google.gson.Gson;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,7 +26,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Objects;
 import java.util.TimeZone;
 
 import edu.pdx.cs410J.benlutz.databinding.FragmentSecondBinding;

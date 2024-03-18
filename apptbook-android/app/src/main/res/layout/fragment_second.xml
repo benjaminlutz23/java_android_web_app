@@ -129,6 +129,4 @@
 
     </LinearLayout>
 
-    <!-- Existing elements -->
-
 </androidx.constraintlayout.widget.ConstraintLayout>

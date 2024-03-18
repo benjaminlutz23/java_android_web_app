@@ -31,7 +31,12 @@ public class FirstFragment extends Fragment {
         binding.button1.setOnClickListener(v ->
                 NavHostFragment.findNavController(FirstFragment.this)
                         .navigate(R.id.action_FirstFragment_to_SecondFragment));
+
+        binding.button2.setOnClickListener(v ->
+                NavHostFragment.findNavController(FirstFragment.this)
+                        .navigate(R.id.action_FirstFragment_to_ThirdFragment));
     }
+
 
     @Override
     public void onDestroyView() {

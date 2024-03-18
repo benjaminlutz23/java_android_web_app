@@ -45,6 +45,7 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
     // JUnit Jupiter API for JUnit 5
     testImplementation libs.junit.jupiter.api
     // JUnit Jupiter Engine for running JUnit 5 tests
