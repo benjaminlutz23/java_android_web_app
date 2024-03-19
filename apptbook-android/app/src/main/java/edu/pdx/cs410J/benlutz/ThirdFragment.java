@@ -89,24 +89,14 @@ public class ThirdFragment extends Fragment {
             return;
         }
 
-        AppointmentBook book = loadAppointmentBook(ownerName);
-        if (book != null) {
-            ZonedDateTime startDateTime = parseDateTimeFromText(binding.startText.getText().toString());
-            ZonedDateTime endDateTime = parseDateTimeFromText(binding.endText.getText().toString());
-
-            if (startDateTime != null && endDateTime != null) {
-                book = filterAppointments(book, startDateTime, endDateTime);
-            }
-
-            Intent intent = new Intent(getActivity(), DisplayActivity.class);
-            intent.putExtra("ownerName", ownerName);
-            intent.putExtra("startTime", binding.startText.getText().toString());
-            intent.putExtra("endTime", binding.endText.getText().toString());
-            startActivity(intent);
-        } else {
-            Toast.makeText(getContext(), "No appointment book found for " + ownerName, Toast.LENGTH_SHORT).show();
-        }
+        // Directly start DisplayActivity without filtering here
+        Intent intent = new Intent(getActivity(), DisplayActivity.class);
+        intent.putExtra("ownerName", ownerName);
+        intent.putExtra("startTime", binding.startText.getText().toString());
+        intent.putExtra("endTime", binding.endText.getText().toString());
+        startActivity(intent);
     }
+
 
     private AppointmentBook loadAppointmentBook(String ownerName) {
         File file = new File(getContext().getFilesDir(), ownerName + ".txt");

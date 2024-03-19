@@ -40,6 +40,7 @@ public class DisplayActivity extends AppCompatActivity {
         findViewById(R.id.done).setOnClickListener(view -> finish());
     }
 
+
     private void prettyPrintAppointmentBook(AppointmentBook book) {
         StringWriter writer = new StringWriter();
         PrettyPrinter printer = new PrettyPrinter(writer);
