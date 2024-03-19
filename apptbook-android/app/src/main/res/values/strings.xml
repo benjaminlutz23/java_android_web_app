@@ -62,4 +62,7 @@
     <string name="click_to_select_start_time">Click to select start time</string>
     <string name="click_to_select_end_time">Click to select end time</string>
     <string name="done">Done</string>
+    <string name="start_time_search">Start Time</string>
+    <string name="end_time_search">End Time</string>
+    <string name="search_in_date_range_optional">Search in Date Range (optional)</string>
 </resources>
