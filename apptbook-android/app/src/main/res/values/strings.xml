@@ -61,4 +61,5 @@
     <string name="search_appointment_by_owner">Search Appointment by Owner</string>
     <string name="click_to_select_start_time">Click to select start time</string>
     <string name="click_to_select_end_time">Click to select end time</string>
+    <string name="done">Done</string>
 </resources>

@@ -21,6 +21,8 @@ public class DisplayActivity extends AppCompatActivity {
         if (book != null) {
             prettyPrintAppointmentBook(book);
         }
+
+        findViewById(R.id.done).setOnClickListener(view -> finish());
     }
 
     private void prettyPrintAppointmentBook(AppointmentBook book) {
@@ -28,9 +30,9 @@ public class DisplayActivity extends AppCompatActivity {
         PrettyPrinter printer = new PrettyPrinter(writer);
         printer.dump(book);
 
-        TextView textView = new TextView(this);
-        textView.setText(writer.toString());
-        setContentView(textView);
+        String prettyPrintedText = writer.toString();
+        TextView textView = findViewById(R.id.appointmentBookTextView);
+        textView.setText(prettyPrintedText);
     }
 
     private AppointmentBook loadAppointmentBook(String ownerName) {
@@ -48,3 +50,5 @@ public class DisplayActivity extends AppCompatActivity {
         return null;
     }
 }
+
+
