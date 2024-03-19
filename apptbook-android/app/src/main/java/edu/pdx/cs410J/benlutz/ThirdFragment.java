@@ -22,6 +22,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import edu.pdx.cs410J.benlutz.databinding.FragmentThirdBinding;
 
@@ -43,7 +44,13 @@ public class ThirdFragment extends Fragment {
                 NavHostFragment.findNavController(ThirdFragment.this)
                         .navigate(R.id.action_ThirdFragment_to_FirstFragment));
 
-        binding.button.setOnClickListener(v -> searchAppointmentBook());
+        binding.button.setOnClickListener(v -> {
+            try {
+                searchAppointmentBook();
+            } catch (invalidOwnerException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         String[] timeZones = TimeZone.getAvailableIDs();
         Arrays.sort(timeZones);
@@ -75,7 +82,7 @@ public class ThirdFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    private void searchAppointmentBook() {
+    private void searchAppointmentBook() throws invalidOwnerException {
         String ownerName = binding.ownerText.getText().toString().trim();
         if (ownerName.isEmpty()) {
             Toast.makeText(getContext(), "Owner name is required", Toast.LENGTH_SHORT).show();
@@ -84,8 +91,17 @@ public class ThirdFragment extends Fragment {
 
         AppointmentBook book = loadAppointmentBook(ownerName);
         if (book != null) {
+            ZonedDateTime startDateTime = parseDateTimeFromText(binding.startText.getText().toString());
+            ZonedDateTime endDateTime = parseDateTimeFromText(binding.endText.getText().toString());
+
+            if (startDateTime != null && endDateTime != null) {
+                book = filterAppointments(book, startDateTime, endDateTime);
+            }
+
             Intent intent = new Intent(getActivity(), DisplayActivity.class);
             intent.putExtra("ownerName", ownerName);
+            intent.putExtra("startTime", binding.startText.getText().toString());
+            intent.putExtra("endTime", binding.endText.getText().toString());
             startActivity(intent);
         } else {
             Toast.makeText(getContext(), "No appointment book found for " + ownerName, Toast.LENGTH_SHORT).show();
@@ -107,10 +123,27 @@ public class ThirdFragment extends Fragment {
         return null;
     }
 
+    private ZonedDateTime parseDateTimeFromText(String dateTimeText) {
+        if (dateTimeText.isEmpty()) {
+            return null;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV");
+        return ZonedDateTime.parse(dateTimeText, formatter);
+    }
+
+    private AppointmentBook filterAppointments(AppointmentBook book, ZonedDateTime start, ZonedDateTime end) throws invalidOwnerException {
+        AppointmentBook filteredBook = new AppointmentBook(book.getOwnerName());
+        for (Appointment appointment : book.getAppointments()) {
+            if (appointment.getBeginTime().compareTo(start) >= 0 && appointment.getEndTime().compareTo(end) <= 0) {
+                filteredBook.addAppointment(appointment);
+            }
+        }
+        return filteredBook;
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
 }
-

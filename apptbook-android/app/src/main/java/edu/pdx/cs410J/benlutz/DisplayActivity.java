@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.File;
 import java.io.FileReader;
 import java.io.StringWriter;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class DisplayActivity extends AppCompatActivity {
 
@@ -16,7 +18,20 @@ public class DisplayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display);
 
         String ownerName = getIntent().getStringExtra("ownerName");
+        String startTimeString = getIntent().getStringExtra("startTime");
+        String endTimeString = getIntent().getStringExtra("endTime");
+
         AppointmentBook book = loadAppointmentBook(ownerName);
+
+        if (book != null && !startTimeString.isEmpty() && !endTimeString.isEmpty()) {
+            ZonedDateTime startTime = ZonedDateTime.parse(startTimeString, DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV"));
+            ZonedDateTime endTime = ZonedDateTime.parse(endTimeString, DateTimeFormatter.ofPattern("M/d/yyyy h:mm a VV"));
+            try {
+                book = filterAppointments(book, startTime, endTime);
+            } catch (invalidOwnerException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         if (book != null) {
             prettyPrintAppointmentBook(book);
@@ -48,6 +63,16 @@ public class DisplayActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private AppointmentBook filterAppointments(AppointmentBook book, ZonedDateTime start, ZonedDateTime end) throws invalidOwnerException {
+        AppointmentBook filteredBook = new AppointmentBook(book.getOwnerName());
+        for (Appointment appointment : book.getAppointments()) {
+            if (appointment.getBeginTime().compareTo(start) >= 0 && appointment.getEndTime().compareTo(end) <= 0) {
+                filteredBook.addAppointment(appointment);
+            }
+        }
+        return filteredBook;
     }
 }
 
