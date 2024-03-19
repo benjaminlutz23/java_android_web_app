@@ -42,13 +42,18 @@
             android:inputType="text"
             android:text="" />
 
+        <Spinner
+            android:id="@+id/timeZoneSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="54dp" />
+
         <EditText
             android:id="@+id/startTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:ems="10"
-            android:hint="@string/start_time"
+            android:hint="@string/click_to_select_start_time"
             android:inputType="datetime"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -62,18 +67,13 @@
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:ems="10"
-            android:hint="@string/end_time"
+            android:hint="@string/click_to_select_end_time"
             android:inputType="datetime"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.403" />
-
-        <Spinner
-            android:id="@+id/timeZoneSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="54dp" />
 
     </LinearLayout>
 

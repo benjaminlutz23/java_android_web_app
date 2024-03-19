@@ -13,6 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -85,7 +92,6 @@ public class SecondFragment extends Fragment {
         ownerName = binding.ownerName.getText().toString();
         description = binding.description.getText().toString();
 
-        // Use the existing ZonedDateTime objects if they have been set, otherwise parse from text
         if (beginTime == null) {
             String startTimeString = binding.startTime.getText().toString();
             beginTime = ZonedDateTime.parse(startTimeString, DATE_TIME_FORMAT);
@@ -98,13 +104,18 @@ public class SecondFragment extends Fragment {
 
         try {
             Appointment appointment = new Appointment(description, beginTime, endTime);
-            AppointmentBook appointmentBook = new AppointmentBook(ownerName);
-            appointmentBook.addAppointment(appointment);
+            AppointmentBook appointmentBook = loadAppointmentBook(ownerName);
 
-            // Display the appointment and appointment book details for confirmation
-            showDialogWithData(appointmentBook);
+            if (appointmentBook == null) {
+                appointmentBook = new AppointmentBook(ownerName);
+            }
+
+            appointmentBook.addAppointment(appointment);
+            saveAppointmentBook(appointmentBook);
+
+            showAllAppointmentBooks();  // Call to display all appointment books after saving
+
         } catch (Exception | invalidDescriptionException e) {
-            // Handle any exceptions, such as invalid input or creation errors
             new AlertDialog.Builder(getContext())
                     .setTitle("Error")
                     .setMessage(e.getMessage())
@@ -116,18 +127,63 @@ public class SecondFragment extends Fragment {
         }
     }
 
-    private void showDialogWithData(AppointmentBook appointmentBook) {
-        // Assuming AppointmentBook and Appointment classes have appropriate toString methods or similar
+    private void showAllAppointmentBooks() {
+        StringBuilder allBooksData = new StringBuilder();
+        File[] files = getContext().getFilesDir().listFiles((dir, name) -> name.endsWith(".txt"));
+
+        for (File file : files) {
+            try (Reader reader = new FileReader(file)) {
+                TextParser parser = new TextParser(reader);
+                AppointmentBook book = parser.parse();
+
+                StringWriter stringWriter = new StringWriter();
+                PrettyPrinter printer = new PrettyPrinter(stringWriter);
+                printer.dump(book);
+                allBooksData.append(stringWriter.toString()).append("\n\n");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        displayAllBooksDialog(allBooksData.toString());
+    }
+
+    private void displayAllBooksDialog(String allBooksData) {
         new AlertDialog.Builder(getContext())
-                .setTitle("Appointment Book Summary")
-                .setMessage("Owner Name: " + appointmentBook.getOwnerName() + "\n" +
-                        "Appointment Details: " + appointmentBook.getAppointments().stream()
-                        .map(Appointment::display) // Assuming Appointment has a display method
-                        .collect(Collectors.joining("\n")))
+                .setTitle("All Appointment Books")
+                .setMessage(allBooksData)
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .create()
                 .show();
     }
+
+
+    private AppointmentBook loadAppointmentBook(String ownerName) {
+        File file = new File(getContext().getFilesDir(), ownerName + ".txt");
+        if (!file.exists()) {
+            return null;
+        }
+
+        try (Reader reader = new FileReader(file)) {
+            TextParser parser = new TextParser(reader);
+            return parser.parse();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void saveAppointmentBook(AppointmentBook appointmentBook) {
+        File file = new File(getContext().getFilesDir(), appointmentBook.getOwnerName() + ".txt");
+
+        try (Writer writer = new FileWriter(file)) {
+            TextDumper dumper = new TextDumper(writer);
+            dumper.dump(appointmentBook);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onDestroyView() {
