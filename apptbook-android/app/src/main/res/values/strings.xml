@@ -65,4 +65,8 @@
     <string name="start_time_search">Start Time</string>
     <string name="end_time_search">End Time</string>
     <string name="search_in_date_range_optional">Search in Date Range (optional)</string>
+    <string name="enter_time">Enter Time</string>
+    <string name="enter_time2">Enter Time</string>
+    <string name="and">and</string>
+    <string name="appointments_between">Appointments between</string>
 </resources>

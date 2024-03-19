@@ -21,7 +21,7 @@
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="330dp"
-        android:layout_height="216dp"
+        android:layout_height="168dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:orientation="vertical"
@@ -30,7 +30,7 @@
         app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.182">
+        app:layout_constraintVertical_bias="0.133">
 
         <TextView
             android:id="@+id/textView"
@@ -84,8 +84,10 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/textView2"
@@ -100,15 +102,29 @@
             android:layout_width="match_parent"
             android:layout_height="54dp" />
 
+        <TextView
+            android:id="@+id/appts_between"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/appointments_between"
+            android:textStyle="bold" />
+
         <EditText
             android:id="@+id/startText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:ems="10"
-            android:hint="@string/start_time_search"
+            android:hint="@string/enter_time"
             android:inputType="text"
             android:text="" />
+
+        <TextView
+            android:id="@+id/andID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/and"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/endText"
@@ -116,7 +132,7 @@
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:ems="10"
-            android:hint="@string/end_time_search"
+            android:hint="@string/enter_time2"
             android:inputType="text"
             android:text="" />
 

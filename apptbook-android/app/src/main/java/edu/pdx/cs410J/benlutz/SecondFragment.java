@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -113,7 +114,7 @@ public class SecondFragment extends Fragment {
             appointmentBook.addAppointment(appointment);
             saveAppointmentBook(appointmentBook);
 
-            showAllAppointmentBooks();  // Call to display all appointment books after saving
+            Toast.makeText(getContext(), "Appointment created for " + ownerName, Toast.LENGTH_SHORT).show();
 
         } catch (Exception | invalidDescriptionException e) {
             new AlertDialog.Builder(getContext())
@@ -125,36 +126,6 @@ public class SecondFragment extends Fragment {
         } catch (invalidOwnerException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void showAllAppointmentBooks() {
-        StringBuilder allBooksData = new StringBuilder();
-        File[] files = getContext().getFilesDir().listFiles((dir, name) -> name.endsWith(".txt"));
-
-        for (File file : files) {
-            try (Reader reader = new FileReader(file)) {
-                TextParser parser = new TextParser(reader);
-                AppointmentBook book = parser.parse();
-
-                StringWriter stringWriter = new StringWriter();
-                PrettyPrinter printer = new PrettyPrinter(stringWriter);
-                printer.dump(book);
-                allBooksData.append(stringWriter.toString()).append("\n\n");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        displayAllBooksDialog(allBooksData.toString());
-    }
-
-    private void displayAllBooksDialog(String allBooksData) {
-        new AlertDialog.Builder(getContext())
-                .setTitle("All Appointment Books")
-                .setMessage(allBooksData)
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-                .create()
-                .show();
     }
 
 

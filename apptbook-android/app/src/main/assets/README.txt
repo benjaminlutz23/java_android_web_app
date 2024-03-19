@@ -1,47 +1,33 @@
-CS 510J Project 6: An Android Application
+Appointment Book Application
+=============================
 
-Developed by: Benjamin Lutz
+Overview
+--------
+This application allows you to create, manage, and search appointments for various owners. It features a user-friendly interface to add new appointments, view all appointments for an owner, and filter appointments within specific date and time ranges.
 
-Overview:
-This application has been enhanced to include a RESTful web service, allowing users to manage their appointment books
-through a server. The client-server architecture enables operations such as adding new appointments and searching for
-appointments within specific time frames via HTTP requests.
+Features
+--------
+- Add new appointments with details such as description, start time, end time, and time zone.
+- View all appointments for a specific owner.
+- Search functionality to filter appointments within a given date and time range.
+- User-friendly date and time pickers for easy input.
+- Time zone support for appointments.
 
-Usage:
-To get started, compile and build the project with the command: ./mvnw verify
+Getting Started
+---------------
+To use the application, follow these steps:
 
-To run the client application, execute:
-java -jar target/apptbook-client.jar [options] <args>
+1. Launch the application.
+2. Add new appointments by entering the owner's name, appointment details, and specifying the time zone.
+3. To view appointments for an owner, enter the owner's name and click "Search".
+4. To filter appointments within a date and time range, provide the start and end times along with the owner's name.
 
-Arguments:
-Arguments must be provided in the following sequence:
-- owner: Name of the appointment book owner.
-- description: Description of the appointment.
-- begin: Start date and time of the appointment in "MM/dd/yyyy hh:mm a VV" format.
-- end: End date and time of the appointment in the same format as begin.
+Prerequisites
+-------------
+- Android device or emulator with Android OS compatible with the application.
 
-Options:
-Options can be used in any order:
-- -print: Prints details of the newly added appointment.
-- -README: Displays README information and exits.
-- -host hostname: Specifies the server's host name.
-- -port port: Specifies the port on which the server is listening.
-- -search: Searches for appointments within a given time range.
-
-Examples of Use:
-    Add an appointment:
-
-        java -jar target/apptbook-client.jar -host localhost -port 8080 "Ben" "Teach Java Class" 10/19/2024 6:00 pm
-            America/Los_Angeles 10/19/2024 9:30 pm America/Los_Angeles
-
-    Search for appointments:
-
-        java -jar target/apptbook-client.jar -host localhost -port 8080 -search "Ben" 11/01/2024 12:00 am America/Los_Angeles
-            11/30/2024 11:59 pm America/Los_Angeles
-
-    Pretty print all appointments:
-
-        java -jar target/apptbook-client.jar -host localhost -port 8080 -search "Ben"
-
-Error Handling:
-The application provides user-friendly error messages for various conditions, such as incorrect command-line syntax, invalid date/time formats, failure to connect to the server, or improperly formatted data for the REST URL.
+Usage
+-----
+- **Add Appointment**: Navigate to the add appointment screen, fill in the details, and save.
+- **View Appointments**: Enter the owner's name in the search screen and press "Search".
+- **Filter Appointments**: After entering the owner's name, specify the start and end times before searching.
