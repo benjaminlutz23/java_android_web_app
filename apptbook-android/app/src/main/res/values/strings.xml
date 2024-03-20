@@ -69,4 +69,7 @@
     <string name="enter_time2">Enter Time</string>
     <string name="and">and</string>
     <string name="appointments_between">Appointments between</string>
+    <string name="appointment_book">Appointment Book</string>
+    <string name="search_appointments">Search Appointments</string>
+    <string name="add_appointment">Add Appointment</string>
 </resources>
